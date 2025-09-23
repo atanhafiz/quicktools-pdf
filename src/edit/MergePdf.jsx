@@ -1,103 +1,118 @@
 import React, { useState } from "react";
 import { PDFDocument } from "pdf-lib";
-import confetti from "canvas-confetti";
+import { FaFilePdf, FaTrash, FaBroom } from "react-icons/fa";
+import PdfToolWrapper from "../components/PdfToolWrapper";
 import {
-  FaFilePdf,
-  FaTrash,
-  FaArrowUp,
-  FaArrowDown,
-  FaTimes,
-} from "react-icons/fa";
+  DndContext,
+  closestCenter,
+  useSensor,
+  useSensors,
+  PointerSensor,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-export default function MergePdf() {
-  const [files, setFiles] = useState([]);
-  const [mergedPdfUrl, setMergedPdfUrl] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [isMerging, setIsMerging] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+const makeId = () => Math.random().toString(36).substring(2, 9);
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles((prev) => [...prev, ...selectedFiles]);
-  };
+function SortableItem({ item, onRemove }) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: item.id });
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const droppedFiles = Array.from(e.dataTransfer.files).filter(
-      (file) => file.type === "application/pdf"
-    );
-    setFiles((prev) => [...prev, ...droppedFiles]);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const removeFile = (index) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const moveFile = (index, direction) => {
-    const newFiles = [...files];
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= files.length) return;
-    [newFiles[index], newFiles[targetIndex]] = [
-      newFiles[targetIndex],
-      newFiles[index],
-    ];
-    setFiles(newFiles);
-  };
-
-  const mergePdfs = async () => {
-    if (files.length < 2) {
-      alert("📌 Please select at least 2 PDF files.");
-      return;
-    }
-
-    setIsMerging(true);
-    setProgress(0);
-
-    const mergedPdf = await PDFDocument.create();
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const pdfBytes = await file.arrayBuffer();
-      const pdf = await PDFDocument.load(pdfBytes);
-      const copiedPages = await mergedPdf.copyPages(
-        pdf,
-        pdf.getPageIndices()
-      );
-      copiedPages.forEach((page) => mergedPdf.addPage(page));
-
-      setProgress(Math.round(((i + 1) / files.length) * 100));
-    }
-
-    const mergedPdfBytes = await mergedPdf.save();
-    const mergedBlob = new Blob([mergedPdfBytes], { type: "application/pdf" });
-    const mergedUrl = URL.createObjectURL(mergedBlob);
-    setMergedPdfUrl(mergedUrl);
-
-    setIsMerging(false);
-
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-    setSuccessMessage("Your PDFs are ready 🎉");
-    setShowModal(true);
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
   };
 
   return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className="flex justify-between items-center bg-blue-50 p-3 rounded-lg shadow-sm"
+    >
+      {/* Drag handle area */}
+      <div
+        {...listeners}
+        className="flex items-center gap-3 text-blue-700 cursor-move flex-1"
+      >
+        <FaFilePdf /> {item.file.name}
+        <span className="text-xs text-gray-500">
+          ({(item.file.size / 1024 / 1024).toFixed(2)} MB)
+        </span>
+      </div>
+
+      {/* Delete button → bukan draggable */}
+      <button
+        onClick={() => onRemove(item.id)}
+        className="px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 ml-2"
+      >
+        <FaTrash />
+      </button>
+    </li>
+  );
+}
+
+export default function MergePdf() {
+  const [files, setFiles] = useState([]);
+  const [outputName, setOutputName] = useState("merged.pdf");
+
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const droppedFiles = Array.from(e.dataTransfer.files)
+      .filter((file) => file.type === "application/pdf")
+      .map((f) => ({ id: makeId(), file: f }));
+    setFiles((prev) => [...prev, ...droppedFiles]);
+  };
+  const handleDragOver = (e) => e.preventDefault();
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files)
+      .filter((file) => file.type === "application/pdf")
+      .map((f) => ({ id: makeId(), file: f }));
+    setFiles((prev) => [...prev, ...selectedFiles]);
+  };
+
+  const clearAll = () => setFiles([]);
+
+  const handleReorder = (event) => {
+    const { active, over } = event;
+    if (!over) return;
+    if (active.id !== over.id) {
+      const oldIndex = files.findIndex((f) => f.id === active.id);
+      const newIndex = files.findIndex((f) => f.id === over.id);
+      setFiles((items) => arrayMove(items, oldIndex, newIndex));
+    }
+  };
+
+  const processFiles = async (items, setProgress) => {
+    const mergedPdf = await PDFDocument.create();
+    for (let i = 0; i < items.length; i++) {
+      const file = items[i].file;
+      const pdfBytes = await file.arrayBuffer();
+      const pdf = await PDFDocument.load(pdfBytes);
+      const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+      copiedPages.forEach((page) => mergedPdf.addPage(page));
+      setProgress(Math.round(((i + 1) / items.length) * 100));
+    }
+    const mergedPdfBytes = await mergedPdf.save();
+    const mergedBlob = new Blob([mergedPdfBytes], { type: "application/pdf" });
+    return URL.createObjectURL(mergedBlob);
+  };
+
+  const totalSize = files.reduce((acc, f) => acc + f.file.size, 0);
+
+  return (
     <div className="p-6 max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-blue-200">
-      <h1 className="text-2xl font-bold mb-2 text-blue-600 flex items-center gap-2">
-        🔗 Merge PDF
-      </h1>
+      <h1 className="text-2xl font-bold mb-2 text-blue-600">🔗 Merge PDF</h1>
       <p className="text-sm text-gray-600 mb-6">
-        📝 <b>How to use:</b> Select 2 or more PDFs → Arrange the order →
-        Click <span className="font-semibold">Merge PDFs</span> →
-        Download the final file.
+        📝 Choose OR drag & drop PDFs → <b>Drag files up & down to reorder</b> → Merge → Download.
       </p>
 
       <input
@@ -105,7 +120,7 @@ export default function MergePdf() {
         accept="application/pdf"
         multiple
         onChange={handleFileChange}
-        className="mb-4 hidden"
+        className="hidden"
         id="fileInput"
       />
       <label
@@ -120,96 +135,73 @@ export default function MergePdf() {
         onDragOver={handleDragOver}
         className="border-2 border-dashed border-blue-400 rounded-lg p-8 mb-6 text-center text-gray-600 hover:bg-blue-50 transition"
       >
-        🚀 Drag & Drop your PDF files here
+        🚀 Or Drag & Drop your PDF files here
       </div>
 
       {files.length > 0 && (
-        <ul className="mb-6 space-y-2">
-          {files.map((file, index) => (
-            <li
-              key={index}
-              className="flex justify-between items-center bg-blue-50 p-3 rounded-lg shadow-sm"
-            >
-              <div className="flex items-center gap-3 text-blue-700">
-                <FaFilePdf /> {file.name}
-                <span className="text-xs text-gray-500">
-                  ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => moveFile(index, -1)}
-                  className="px-2 py-1 bg-yellow-400 rounded text-sm hover:bg-yellow-500"
-                >
-                  <FaArrowUp />
-                </button>
-                <button
-                  onClick={() => moveFile(index, 1)}
-                  className="px-2 py-1 bg-yellow-400 rounded text-sm hover:bg-yellow-500"
-                >
-                  <FaArrowDown />
-                </button>
-                <button
-                  onClick={() => removeFile(index)}
-                  className="px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <button
-        onClick={mergePdfs}
-        className="w-full px-4 py-3 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700 transition"
-        disabled={isMerging}
-      >
-        {isMerging ? "Merging..." : "🔗 Merge PDFs"}
-      </button>
-
-      {isMerging && (
-        <div className="w-full bg-gray-200 rounded-full mt-4">
-          <div
-            className="bg-blue-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full"
-            style={{ width: `${progress}%` }}
-          >
-            {progress}%
-          </div>
-        </div>
-      )}
-
-      {/* Success Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-white rounded-lg p-6 shadow-lg max-w-sm text-center relative animate-bounceIn">
+        <>
+          <div className="flex justify-between items-center mb-3 text-sm text-gray-600">
+            <span>
+              📊 {files.length} file(s) – {(totalSize / 1024 / 1024).toFixed(2)} MB total
+            </span>
             <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={clearAll}
+              className="flex items-center gap-2 px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
             >
-              <FaTimes />
+              <FaBroom /> Clear All
             </button>
-            <h2 className="text-xl font-bold text-green-600 mb-3 animate-pulse">
-              🎉 Merge Completed!
-            </h2>
-            <div className="text-4xl mb-3 animate-bounce">🥳✨🎊</div>
-            <p className="text-gray-600 mb-4">{successMessage}</p>
-            {mergedPdfUrl && (
-              <a
-                href={mergedPdfUrl}
-                download="merged.pdf"
-                className="px-5 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
-              >
-                ⬇️ Download Merged PDF
-              </a>
-            )}
-            <p className="mt-3 text-sm text-gray-500">
-              Thank you for using <b>Quicktools</b> 💙
-            </p>
           </div>
-        </div>
+
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleReorder}
+          >
+            <SortableContext
+              items={files.map((f) => f.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <ul className="mb-6 space-y-2">
+                {files.map((f) => (
+                  <SortableItem
+                    key={f.id}
+                    item={f}
+                    onRemove={(id) =>
+                      setFiles((prev) => prev.filter((file) => file.id !== id))
+                    }
+                  />
+                ))}
+              </ul>
+            </SortableContext>
+          </DndContext>
+
+          <p className="text-xs text-gray-500 mt-2">
+            💡 Tip: Drag files up & down to reorder them
+          </p>
+        </>
       )}
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          ✏️ Output File Name
+        </label>
+        <input
+          type="text"
+          value={outputName}
+          onChange={(e) => setOutputName(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
+        />
+      </div>
+
+      <PdfToolWrapper
+        title=""
+        description=""
+        actionLabel="🔗 Merge PDFs"
+        processFiles={async (_, setProgress) => await processFiles(files, setProgress)}
+        multiple={true}
+        outputName={outputName || "merged.pdf"}
+        files={files}
+      />
     </div>
   );
 }
