@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "./components/PageWrapper";
+import StatsCounter from "./components/StatsCounter";
 
 export default function ToolsHub() {
   const categories = [
@@ -47,6 +48,10 @@ export default function ToolsHub() {
 
   return (
     <PageWrapper title="🚀 QuickTools PDF Hub">
+      {/* Stats Counter */}
+      <StatsCounter />
+
+      {/* Tool Categories */}
       {categories.map((cat, i) => (
         <div key={i} className="mb-12">
           <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{cat.title}</h2>
@@ -57,7 +62,7 @@ export default function ToolsHub() {
                 to={tool.path}
                 className="block bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 p-6 text-center sm:text-left"
               >
-                <div className="text-4xl mb-3">{tool.icon}</div>
+                <div className="text-3xl mb-3">{tool.icon}</div>
                 <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-gray-100">{tool.name}</h3>
                 <p className="text-gray-700 dark:text-gray-300 text-sm">{tool.desc}</p>
               </Link>

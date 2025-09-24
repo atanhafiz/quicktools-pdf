@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
 import PageWrapper from "../components/PageWrapper";
 import BrowserMockup from "../components/BrowserMockup";
+import Testimonials from "../components/Testimonials"; // ✅ Import reusable testimonials
 
 export default function Landing() {
   return (
@@ -62,16 +64,13 @@ export default function Landing() {
         ))}
       </div>
 
-      {/* 2nd Mockup Section: Dashboard Preview */}
+      {/* Dashboard Preview */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20 max-w-6xl mx-auto">
-        {/* Left: Screenshot Mockup (Dashboard) */}
         <div className="flex justify-center lg:justify-start">
           <div className="w-full max-w-sm sm:max-w-md md:max-w-lg">
             <BrowserMockup image="/images/dashboard.png" />
           </div>
         </div>
-
-        {/* Right: Text */}
         <div className="text-center lg:text-left flex flex-col justify-center">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
             ⚡ Powerful Dashboard
@@ -89,7 +88,7 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* 3rd Mockup Section: Pricing Preview */}
+      {/* Pricing Preview */}
       <div className="max-w-6xl mx-auto mb-20 text-center">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10">
           💰 Simple Pricing for Everyone
@@ -112,6 +111,13 @@ export default function Landing() {
             >
               Get Started Free
             </Link>
+            <HashLink
+              smooth
+              to="/pricing#faq"
+              className="text-blue-600 dark:text-blue-400 hover:underline text-sm block mt-3"
+            >
+              See FAQs →
+            </HashLink>
           </div>
 
           {/* Pro Plan */}
@@ -134,6 +140,13 @@ export default function Landing() {
             >
               Upgrade to Pro →
             </Link>
+            <HashLink
+              smooth
+              to="/pricing#faq"
+              className="text-blue-600 dark:text-blue-400 hover:underline text-sm block mt-3"
+            >
+              See FAQs →
+            </HashLink>
           </div>
 
           {/* Enterprise Plan */}
@@ -154,58 +167,19 @@ export default function Landing() {
             >
               Contact Sales
             </Link>
+            <HashLink
+              smooth
+              to="/pricing#faq"
+              className="text-blue-600 dark:text-blue-400 hover:underline text-sm block mt-3"
+            >
+              See FAQs →
+            </HashLink>
           </div>
         </div>
       </div>
 
-      {/* Testimonials */}
-      <div className="max-w-6xl mx-auto mb-20">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
-          💬 What Our Users Say
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            {
-              name: "Sarah J.",
-              role: "University Student",
-              feedback:
-                "QuickToolsPDF saved me hours during my thesis. The PDF to Word tool is a lifesaver!",
-              stars: 5,
-            },
-            {
-              name: "Michael K.",
-              role: "Freelancer",
-              feedback:
-                "I use the compress and merge tools daily. Simple, fast, and reliable.",
-              stars: 5,
-            },
-            {
-              name: "Aisha R.",
-              role: "Project Manager",
-              feedback:
-                "Our team uses the eSign workflow — it streamlined our approvals. Highly recommend!",
-              stars: 4,
-            },
-          ].map((t, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition p-6 text-left"
-            >
-              <div className="flex items-center mb-3">
-                {Array.from({ length: t.stars }).map((_, j) => (
-                  <span key={j} className="text-yellow-400 text-lg">★</span>
-                ))}
-                {Array.from({ length: 5 - t.stars }).map((_, j) => (
-                  <span key={j} className="text-gray-300 dark:text-gray-600 text-lg">★</span>
-                ))}
-              </div>
-              <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm">{t.feedback}</p>
-              <p className="font-semibold text-gray-900 dark:text-gray-100">{t.name}</p>
-              <p className="text-gray-600 dark:text-gray-400 text-xs">{t.role}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Testimonials (reuse component with avatars) */}
+      <Testimonials />
 
       {/* Final CTA Banner */}
       <div className="w-full max-w-5xl bg-blue-600 dark:bg-blue-700 rounded-2xl shadow-xl p-10 text-center text-white mx-auto">

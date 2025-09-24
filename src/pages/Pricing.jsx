@@ -100,24 +100,19 @@ export default function Pricing() {
       </div>
 
       {/* FAQ Section */}
-      <div className="max-w-4xl mx-auto mt-20">
+      <div id="faq" className="max-w-4xl mx-auto mt-20">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
           ❓ Frequently Asked Questions
         </h2>
         <div className="space-y-4">
           {faqs.map((faq, i) => (
-            <div
-              key={i}
-              className="border-b border-gray-200 dark:border-gray-700 pb-3"
-            >
+            <div key={i} className="border-b border-gray-200 dark:border-gray-700 pb-3">
               <button
                 onClick={() => toggleFAQ(i)}
                 className="w-full flex justify-between items-center text-left text-lg font-medium text-gray-900 dark:text-gray-100 focus:outline-none"
               >
                 {faq.q}
-                <span className="text-xl">
-                  {openIndex === i ? "−" : "+"}
-                </span>
+                <span className="text-xl">{openIndex === i ? "−" : "+"}</span>
               </button>
               {openIndex === i && (
                 <p className="mt-2 text-gray-700 dark:text-gray-300 text-sm">{faq.a}</p>
