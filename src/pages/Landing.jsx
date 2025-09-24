@@ -113,7 +113,7 @@ export default function Landing() {
   return (
     <PageWrapper>
       {/* Hero Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+      <div className="grid grid-cols-1 items-center mb-20">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
             All-in-One <span className="text-blue-600 dark:text-blue-400">PDF</span> & AI Toolkit
@@ -123,17 +123,18 @@ export default function Landing() {
             Trusted by students, professionals, and businesses worldwide.
           </p>
           <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-            <Link to="/tools" className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg transition">
+            <Link
+              to="/tools"
+              className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg animate-pulse"
+            >
               🚀 Start Free
             </Link>
-            <Link to="/pricing" className="px-8 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-bold shadow-lg transition">
+            <Link
+              to="/pricing"
+              className="px-8 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-bold shadow-lg transition"
+            >
               💰 See Pricing
             </Link>
-          </div>
-        </div>
-        <div className="flex justify-center lg:justify-end">
-          <div className="w-full max-w-sm sm:max-w-md md:max-w-lg">
-            <BrowserMockup image="/images/toolshub.png" />
           </div>
         </div>
       </div>
@@ -170,7 +171,7 @@ export default function Landing() {
         </motion.div>
       </div>
 
-      {/* Mini Testimonials Carousel with Stars */}
+      {/* Mini Testimonials Carousel */}
       <div className="max-w-6xl mx-auto mb-20 text-center">
         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
           What early users are saying
@@ -179,9 +180,7 @@ export default function Landing() {
           {miniTestimonials.map((t, i) => (
             <div key={i} className="px-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 text-left">
-                {/* Feedback */}
                 <p className="text-gray-700 dark:text-gray-300 text-sm italic mb-3">“{t.feedback}”</p>
-                {/* Stars */}
                 <div className="flex mb-2">
                   {Array.from({ length: t.stars }).map((_, j) => (
                     <span key={j} className="text-yellow-400">★</span>
@@ -190,7 +189,6 @@ export default function Landing() {
                     <span key={j} className="text-gray-300 dark:text-gray-600">★</span>
                   ))}
                 </div>
-                {/* Name + Role */}
                 <p className="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">
                   {t.name}{" "}
                   <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -311,6 +309,16 @@ export default function Landing() {
         </p>
         <Link to="/tools" className="px-10 py-4 bg-white text-blue-600 font-bold rounded-lg shadow-md hover:bg-gray-100 transition">
           🚀 Get Started Free
+        </Link>
+      </div>
+
+      {/* Floating Sticky Start Free */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Link
+          to="/tools"
+          className="px-10 py-5 text-lg rounded-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold shadow-2xl transition transform hover:scale-105 animate-bounce"
+        >
+          🚀 Start Free
         </Link>
       </div>
     </PageWrapper>
