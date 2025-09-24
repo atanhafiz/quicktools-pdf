@@ -3,63 +3,60 @@ import { ThemeProvider } from "./ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-// ====== DASHBOARD PAGES ======
+// ====== MAIN PAGES ======
+import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import DashboardEdit from "./pages/DashboardEdit";
 import DashboardConvert from "./pages/DashboardConvert";
 import DashboardSecure from "./pages/DashboardSecure";
 import DashboardSmartAI from "./pages/DashboardSmartAI";
+import ToolsHub from "./ToolsHub";
 
-// ====== EDIT TOOLS ======
+// ====== TOOLS ======
 import MergePdf from "./edit/MergePdf";
 import SplitPdf from "./edit/SplitPdf";
 import RotatePdf from "./edit/RotatePdf";
 import DeletePagesPdf from "./edit/DeletePagesPdf";
 import OrganizePdf from "./edit/OrganizePdf";
-
-// ====== CONVERT TOOLS ======
 import PdfToWord from "./convert/PdfToWord";
 import PdfToExcel from "./convert/PdfToExcel";
 import PdfToPpt from "./convert/PdfToPpt";
 import PdfToImage from "./convert/PdfToImage";
 import ImageToPdf from "./convert/ImageToPdf";
 import WordToPdf from "./convert/WordToPdf";
-
-// ====== SECURE TOOLS ======
 import ProtectPdf from "./secure/ProtectPdf";
 import UnlockPdf from "./secure/UnlockPdf";
 import SignPdf from "./secure/SignPdf";
 import WatermarkPdf from "./secure/WatermarkPdf";
 import EsignFlow from "./secure/EsignFlow";
-
-// ====== SMART AI TOOLS ======
 import OcrPdf from "./smartai/OcrPdf";
 import AiSummary from "./smartai/AiSummary";
 import FormFiller from "./smartai/FormFiller";
 
-// ====== TOOLS HUB ======
-import ToolsHub from "./ToolsHub";
+// ====== EXTRA PAGES ======
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import FAQ from "./pages/FAQ";
+import Pricing from "./pages/Pricing";
 
 function App() {
   return (
     <ThemeProvider>
       <Router>
         <div className="flex flex-col min-h-screen">
-          {/* Navbar */}
           <Navbar />
-
-          {/* Main Content */}
           <main className="flex-grow">
             <Routes>
-              {/* MAIN DASHBOARD */}
+              {/* LANDING */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/tools" element={<ToolsHub />} />
+
+              {/* DASHBOARD */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/edit" element={<DashboardEdit />} />
               <Route path="/dashboard/convert" element={<DashboardConvert />} />
               <Route path="/dashboard/secure" element={<DashboardSecure />} />
               <Route path="/dashboard/smartai" element={<DashboardSmartAI />} />
-
-              {/* TOOLS HUB */}
-              <Route path="/" element={<ToolsHub />} />
 
               {/* EDIT TOOLS */}
               <Route path="/merge" element={<MergePdf />} />
@@ -87,10 +84,14 @@ function App() {
               <Route path="/ocr" element={<OcrPdf />} />
               <Route path="/ai-summary" element={<AiSummary />} />
               <Route path="/form-filler" element={<FormFiller />} />
+
+              {/* EXTRA */}
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/pricing" element={<Pricing />} />
             </Routes>
           </main>
-
-          {/* Footer */}
           <Footer />
         </div>
       </Router>

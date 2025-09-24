@@ -21,9 +21,13 @@ export default function Footer() {
           <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
             Quick Links
           </h3>
+          <Link to="/" className="hover:text-blue-500">Home</Link>
+          <Link to="/tools" className="hover:text-blue-500">Tools Hub</Link>
           <Link to="/dashboard" className="hover:text-blue-500">Dashboard</Link>
-          <Link to="/" className="hover:text-blue-500">Tools Hub</Link>
-          <a href="mailto:support@quicktools.ai" className="hover:text-blue-500">Contact</a>
+          <Link to="/pricing" className="hover:text-blue-500">Pricing</Link>
+          <Link to="/about" className="hover:text-blue-500">About</Link>
+          <Link to="/contact" className="hover:text-blue-500">Contact</Link>
+          <Link to="/faq" className="hover:text-blue-500">FAQ</Link>
         </div>
 
         {/* Note */}
