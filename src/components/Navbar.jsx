@@ -37,7 +37,7 @@ export default function Navbar() {
           onClick={toggleTheme}
           className="ml-4 px-3 py-1 rounded-lg bg-gray-700 hover:bg-gray-600 transition flex items-center"
         >
-          {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+          {theme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
         </button>
       </div>
     </nav>
