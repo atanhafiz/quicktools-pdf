@@ -112,32 +112,32 @@ export default function Landing() {
 
   return (
     <PageWrapper>
-      {/* Hero Section */}
-      <div className="grid grid-cols-1 items-center mb-20">
-        <div className="text-center lg:text-left">
-          <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
+        {/* Hero Section */}
+        <div className="text-center mb-20">
+        <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
             All-in-One <span className="text-blue-600 dark:text-blue-400">PDF</span> & AI Toolkit
-          </h1>
-          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-xl mx-auto lg:mx-0 mb-8">
+        </h1>
+        <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto mb-8">
             Edit, convert, secure, and enhance your documents instantly.  
             Trusted by students, professionals, and businesses worldwide.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              to="/tools"
-              className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg animate-pulse"
+            to="/tools"
+            className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg animate-pulse"
             >
-              🚀 Start Free
+            🚀 Start Free
             </Link>
             <Link
-              to="/pricing"
-              className="px-8 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-bold shadow-lg transition"
+            to="/pricing"
+            className="px-8 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-bold shadow-lg transition"
             >
-              💰 See Pricing
+            💰 See Pricing
             </Link>
-          </div>
         </div>
-      </div>
+        </div>
 
       {/* Stats Counter */}
       <StatsCounter files={2000000} users={50000} uptime={99.9} countries={40} />

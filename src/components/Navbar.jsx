@@ -6,6 +6,11 @@ export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // disable scroll belakang bila menu terbuka
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
+  }, [menuOpen]);
+
   // apply dark mode ke <html>
   useEffect(() => {
     if (darkMode) {
@@ -15,16 +20,48 @@ export default function Navbar() {
     }
   }, [darkMode]);
 
+  // play sound
+  const playSound = (file) => {
+    const audio = new Audio(file);
+    audio.volume = 0.3; // lembut sikit
+    audio.play().catch(() => {});
+  };
+
+  // handle menu toggle
+  const toggleMenu = () => {
+    if (!menuOpen) {
+      playSound("/sounds/open.mp3"); // bunyi buka
+    } else {
+      playSound("/sounds/close.mp3"); // bunyi tutup
+    }
+    setMenuOpen(!menuOpen);
+  };
+
+  // framer-motion variants untuk stagger link animation
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+  const itemVariants = {
+    hidden: { x: 50, opacity: 0 },
+    show: { x: 0, opacity: 1 },
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          {/* Left: Logo */}
-          <Link
-            to="/"
-            className="text-xl font-extrabold text-blue-600 flex items-center gap-1"
-          >
-            QuickTools<span className="text-gray-900 dark:text-gray-100">PDF</span>
+          {/* Left: Logo + tagline */}
+          <Link to="/" className="group flex flex-col">
+            <span className="text-xl font-extrabold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent group-hover:from-pink-500 group-hover:to-yellow-500 transition">
+              QuickToolsPDF
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              AI PDF Suite
+            </span>
           </Link>
 
           {/* Center: Nav Links (desktop only) */}
@@ -55,15 +92,18 @@ export default function Navbar() {
 
           {/* Right: Desktop CTA + Dark/Light toggle */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Mode toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="px-3 py-1 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-semibold"
+              title="Switch Theme"
+              className="px-3 py-1 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-semibold transition transform hover:rotate-12"
             >
-              {darkMode ? "☀️ Light" : "🌙 Dark"}
+              {darkMode ? "☀️" : "🌙"}
             </button>
+            {/* Start Free CTA */}
             <Link
               to="/tools"
-              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md transition"
+              className="px-5 py-2 rounded-lg font-bold text-white shadow-md bg-gradient-to-r from-blue-500 to-purple-600 hover:from-purple-600 hover:to-pink-500 transition animate-pulse"
             >
               🚀 Start Free
             </Link>
@@ -72,8 +112,8 @@ export default function Navbar() {
           {/* Mobile Hamburger */}
           <div className="md:hidden">
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="px-3 py-2 rounded-lg text-gray-800 dark:text-gray-100"
+              onClick={toggleMenu}
+              className="px-3 py-2 rounded-lg text-gray-800 dark:text-gray-100 transform hover:rotate-90 transition"
             >
               {menuOpen ? "✖" : "☰"}
             </button>
@@ -91,12 +131,17 @@ export default function Navbar() {
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              onClick={() => setMenuOpen(false)}
+              onClick={toggleMenu}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
             />
 
-            {/* Slide-in Menu */}
+            {/* Slide-in Menu with swipe support */}
             <motion.div
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              onDragEnd={(e, info) => {
+                if (info.offset.x < -100) toggleMenu(); // swipe left close
+              }}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -105,41 +150,54 @@ export default function Navbar() {
             >
               {/* Close button top right */}
               <button
-                onClick={() => setMenuOpen(false)}
-                className="self-end text-2xl text-gray-800 dark:text-gray-100 mb-6"
+                onClick={toggleMenu}
+                className="self-end text-2xl text-gray-800 dark:text-gray-100 mb-6 transform hover:rotate-90 transition"
               >
                 ✖
               </button>
 
-              {[
-                { path: "/", label: "Home" },
-                { path: "/tools", label: "Tools Hub" },
-                { path: "/dashboard", label: "Dashboard" },
-                { path: "/pricing", label: "Pricing" },
-                { path: "/about", label: "About" },
-                { path: "/faq", label: "FAQ" },
-              ].map((link) => (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `block px-3 py-2 rounded-lg shadow-md ${
-                      isActive
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
-                    }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              ))}
+              {/* Links with stagger animation */}
+              <motion.div
+                initial="hidden"
+                animate="show"
+                exit="hidden"
+                variants={containerVariants}
+                className="flex flex-col gap-3"
+              >
+                {[
+                  { path: "/", label: "Home" },
+                  { path: "/tools", label: "Tools Hub" },
+                  { path: "/dashboard", label: "Dashboard" },
+                  { path: "/pricing", label: "Pricing" },
+                  { path: "/about", label: "About" },
+                  { path: "/faq", label: "FAQ" },
+                ].map((link) => (
+                  <motion.div key={link.path} variants={itemVariants}>
+                    <NavLink
+                      to={link.path}
+                      onClick={toggleMenu}
+                      className={({ isActive }) =>
+                        `block px-3 py-2 rounded-lg shadow-md ${
+                          isActive
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                        }`
+                      }
+                    >
+                      {link.label}
+                    </NavLink>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Divider */}
+              <hr className="my-4 border-gray-300 dark:border-gray-700" />
 
               {/* Mode toggle */}
               <button
                 onClick={() => {
                   setDarkMode(!darkMode);
-                  setMenuOpen(false);
+                  toggleMenu();
                 }}
                 className="px-3 py-2 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-semibold"
               >
@@ -149,11 +207,18 @@ export default function Navbar() {
               {/* Start Free */}
               <Link
                 to="/tools"
-                onClick={() => setMenuOpen(false)}
-                className="px-4 py-3 rounded-lg bg-blue-600 text-white font-bold shadow-md text-center"
+                onClick={toggleMenu}
+                className="px-4 py-3 rounded-lg bg-blue-600 text-white font-bold shadow-inner text-center"
               >
                 🚀 Start Free
               </Link>
+
+              {/* Social Links */}
+              <div className="flex justify-center gap-4 mt-6 text-gray-600 dark:text-gray-300">
+                <a href="https://twitter.com" target="_blank" rel="noreferrer">🐦</a>
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer">💼</a>
+                <a href="https://github.com" target="_blank" rel="noreferrer">💻</a>
+              </div>
             </motion.div>
           </>
         )}
