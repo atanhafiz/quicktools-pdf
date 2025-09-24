@@ -60,9 +60,9 @@ export default function ToolsHub() {
               <Link
                 key={j}
                 to={tool.path}
-                className="block bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 p-6"
+                className="block bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 p-6 text-center sm:text-left"
               >
-                <div className="text-3xl mb-3">{tool.icon}</div>
+                <div className="text-4xl mb-3">{tool.icon}</div>
                 <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-gray-100">
                   {tool.name}
                 </h3>
