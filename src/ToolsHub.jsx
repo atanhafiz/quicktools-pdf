@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import PageWrapper from "./components/PageWrapper";
 
 export default function ToolsHub() {
   const categories = [
@@ -45,16 +46,10 @@ export default function ToolsHub() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-8">
-      <h1 className="text-4xl font-extrabold mb-10 text-center text-gray-900 dark:text-gray-100">
-        🚀 QuickTools PDF Hub
-      </h1>
-
+    <PageWrapper title="🚀 QuickTools PDF Hub">
       {categories.map((cat, i) => (
         <div key={i} className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
-            {cat.title}
-          </h2>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{cat.title}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {cat.tools.map((tool, j) => (
               <Link
@@ -63,15 +58,13 @@ export default function ToolsHub() {
                 className="block bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 p-6 text-center sm:text-left"
               >
                 <div className="text-4xl mb-3">{tool.icon}</div>
-                <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-gray-100">
-                  {tool.name}
-                </h3>
+                <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-gray-100">{tool.name}</h3>
                 <p className="text-gray-700 dark:text-gray-300 text-sm">{tool.desc}</p>
               </Link>
             ))}
           </div>
         </div>
       ))}
-    </div>
+    </PageWrapper>
   );
 }
