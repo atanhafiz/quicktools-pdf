@@ -9,6 +9,7 @@ export default function PdfToolWrapper({
   multiple = false,
   outputName = "output.pdf",
   files = null,
+  accept = ".pdf", // default PDF
 }) {
   const [internalFiles, setInternalFiles] = useState([]);
   const [resultUrl, setResultUrl] = useState(null);
@@ -43,7 +44,7 @@ export default function PdfToolWrapper({
 
   const handleProcess = async () => {
     if (!usedFiles.length) {
-      alert("📌 Please upload your PDF first.");
+      alert("📌 Please upload your file first.");
       return;
     }
     setIsProcessing(true);
@@ -69,14 +70,27 @@ export default function PdfToolWrapper({
     setShowSad(true);
   };
 
+  // ✅ Robust detect file label (MIME + extension)
+  const getFileLabel = () => {
+    const lower = accept.toLowerCase();
+
+    if (lower.includes("word") || lower.includes(".doc")) return "Word File";
+    if (lower.includes("excel") || lower.includes(".xls")) return "Excel File";
+    if (lower.includes("image") || lower.includes(".png") || lower.includes(".jpg") || lower.includes(".jpeg")) 
+      return "Image File";
+    if (lower.includes("powerpoint") || lower.includes("ppt")) return "PowerPoint File";
+
+    return "PDF File"; // fallback
+  };
+
   return (
     <div>
-      {/* Input untuk single-file tools */}
+      {/* Input untuk upload file */}
       {files === null && (
         <>
           <input
             type="file"
-            accept="application/pdf"
+            accept={accept}
             multiple={multiple}
             onChange={handleFileChange}
             className="hidden"
@@ -86,7 +100,8 @@ export default function PdfToolWrapper({
             htmlFor="fileInput"
             className="cursor-pointer inline-block px-4 py-2 mb-4 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
           >
-            📂 Choose PDF File{multiple && "s"}
+            📂 Choose {getFileLabel()}
+            {multiple && "s"}
           </label>
         </>
       )}
@@ -125,7 +140,7 @@ export default function PdfToolWrapper({
             <h2 className="text-xl font-bold text-green-600 mb-3">🎉 Completed!</h2>
             <div className="text-3xl mb-3 animate-bounce">🥳✨📄</div>
             <p className="text-gray-600 mb-4">
-              Your PDF has been successfully processed.
+              Your file has been successfully processed.
             </p>
             {resultUrl && (
               <a

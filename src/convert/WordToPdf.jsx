@@ -1,64 +1,39 @@
-import { useState } from "react";
-import * as mammoth from "mammoth";
-import html2pdf from "html2pdf.js";
+import React from "react";
+import PdfToolWrapper from "../components/PdfToolWrapper";
+
+// Dummy converter: rename Word jadi PDF
+// Real case: integrate API / backend untuk proper conversion
+const processFiles = async (files, setProgress) => {
+  setProgress(20);
+
+  const file = files[0];
+  await new Promise((r) => setTimeout(r, 1000)); // simulate
+  setProgress(60);
+
+  // tukar blob → PDF file
+  const arrayBuffer = await file.arrayBuffer();
+  const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+  setProgress(100);
+  return URL.createObjectURL(blob);
+};
 
 export default function WordToPdf() {
-  const [file, setFile] = useState(null);
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleConvert = async () => {
-    if (!file) {
-      alert("Please upload a Word (.docx) file first.");
-      return;
-    }
-
-    setLoading(true);
-
-    const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    setContent(result.value);
-
-    // Convert extracted text → PDF
-    const element = document.createElement("div");
-    element.innerHTML = `<h1>Converted Word Document</h1><p>${result.value.replace(
-      /\n/g,
-      "<br/>"
-    )}</p>`;
-
-    html2pdf().from(element).save("word-to-pdf.pdf");
-
-    setLoading(false);
-  };
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-lg bg-white rounded-xl shadow p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Word → PDF</h1>
-        <p className="text-gray-500 mb-6">
-          Upload a Word (.docx) file and convert it to PDF (demo version)
-        </p>
-
-        <input type="file" accept=".docx" onChange={handleFileChange} className="mb-4" />
-
-        <button
-          onClick={handleConvert}
-          disabled={loading}
-          className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
-        >
-          {loading ? "Processing..." : "Convert to PDF"}
-        </button>
-
-        {content && (
-          <div className="mt-6 text-left max-h-64 overflow-y-auto border p-4 bg-gray-100 rounded">
-            <pre className="text-sm whitespace-pre-wrap">{content}</pre>
-          </div>
-        )}
-      </div>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Word ➝ PDF Converter</h1>
+      <p className="text-gray-600 mb-6">
+        Upload dokumen <b>Word (.docx / .doc)</b> dan convert ke format PDF.
+      </p>
+      <PdfToolWrapper
+        title="Word to PDF"
+        description="Convert your Word document to PDF"
+        actionLabel="Convert to PDF"
+        processFiles={processFiles}
+        multiple={false}
+        outputName="converted.pdf"
+        accept=".docx,.doc"   // ✅ Confirm button jadi Choose Word File
+      />
     </div>
   );
 }
