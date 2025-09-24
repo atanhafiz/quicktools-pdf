@@ -73,7 +73,14 @@ export default function Landing() {
     slidesToScroll: 1,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          centerMode: true,
+          centerPadding: "0px",
+        },
+      },
     ],
   };
 
@@ -112,32 +119,30 @@ export default function Landing() {
 
   return (
     <PageWrapper>
-        {/* Hero Section */}
-        <div className="text-center mb-20">
+      {/* Hero Section (centered) */}
+      <div className="text-center mb-20">
         <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
-            All-in-One <span className="text-blue-600 dark:text-blue-400">PDF</span> & AI Toolkit
+          All-in-One <span className="text-blue-600 dark:text-blue-400">PDF</span> & AI Toolkit
         </h1>
         <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-            Edit, convert, secure, and enhance your documents instantly.  
-            Trusted by students, professionals, and businesses worldwide.
+          Edit, convert, secure, and enhance your documents instantly.  
+          Trusted by students, professionals, and businesses worldwide.
         </p>
-
-        {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link
+          <Link
             to="/tools"
             className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-lg animate-pulse"
-            >
+          >
             🚀 Start Free
-            </Link>
-            <Link
+          </Link>
+          <Link
             to="/pricing"
             className="px-8 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 font-bold shadow-lg transition"
-            >
+          >
             💰 See Pricing
-            </Link>
+          </Link>
         </div>
-        </div>
+      </div>
 
       {/* Stats Counter */}
       <StatsCounter files={2000000} users={50000} uptime={99.9} countries={40} />
@@ -153,7 +158,12 @@ export default function Landing() {
 
       {/* Growth Text + Badge */}
       <div className="max-w-3xl mx-auto mb-16 text-center">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="inline-flex items-center gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="inline-flex items-center gap-3"
+        >
           <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             📈 Growing{" "}
             <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent font-extrabold text-2xl">
@@ -171,7 +181,7 @@ export default function Landing() {
         </motion.div>
       </div>
 
-      {/* Mini Testimonials Carousel */}
+      {/* Mini Testimonials Carousel (fixed mobile) */}
       <div className="max-w-6xl mx-auto mb-20 text-center">
         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
           What early users are saying
@@ -179,8 +189,14 @@ export default function Landing() {
         <Slider {...sliderSettings}>
           {miniTestimonials.map((t, i) => (
             <div key={i} className="px-4">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 text-left">
-                <p className="text-gray-700 dark:text-gray-300 text-sm italic mb-3">“{t.feedback}”</p>
+              <motion.div
+                layout
+                transition={{ duration: 0.3 }}
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 h-full flex flex-col justify-between"
+              >
+                <p className="text-gray-700 dark:text-gray-300 text-sm italic mb-3 sm:line-clamp-3">
+                  “{t.feedback}”
+                </p>
                 <div className="flex mb-2">
                   {Array.from({ length: t.stars }).map((_, j) => (
                     <span key={j} className="text-yellow-400">★</span>
@@ -195,7 +211,7 @@ export default function Landing() {
                     – {t.role}
                   </span>
                 </p>
-              </div>
+              </motion.div>
             </div>
           ))}
         </Slider>
@@ -209,7 +225,10 @@ export default function Landing() {
           { icon: "🔐", title: "Secure", desc: "Protect with password, unlock, sign, and watermark." },
           { icon: "🤖", title: "Smart AI", desc: "OCR, summaries, and AI-powered form filling." },
         ].map((f, i) => (
-          <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition p-6 text-center sm:text-left">
+          <div
+            key={i}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition p-6 text-center sm:text-left"
+          >
             <div className="text-4xl mb-3">{f.icon}</div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{f.title}</h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm">{f.desc}</p>
