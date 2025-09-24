@@ -58,8 +58,13 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {/* Stats Counter */}
-      <StatsCounter />
+      {/* Stats Counter with props */}
+      <StatsCounter 
+        files={20000000}   // 20M files
+        users={500000}     // 500k users
+        uptime={99.9}
+        countries={120}
+      />
 
       {/* Testimonials */}
       <Testimonials />

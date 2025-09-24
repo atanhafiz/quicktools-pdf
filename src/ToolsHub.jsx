@@ -48,8 +48,13 @@ export default function ToolsHub() {
 
   return (
     <PageWrapper title="🚀 QuickTools PDF Hub">
-      {/* Stats Counter */}
-      <StatsCounter />
+      {/* Stats Counter with props */}
+      <StatsCounter 
+        files={10000000}   // 10M files
+        users={200000}     // 200k users
+        uptime={99.9}
+        countries={80}
+      />
 
       {/* Tool Categories */}
       {categories.map((cat, i) => (
