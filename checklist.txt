@@ -1,0 +1,86 @@
+Mantap bosss 🔥
+Ni saya susun **QA Testing Checklist untuk Convert Tools** → boleh guna masa bosss/QA team test semua 6 tools ni.
+
+---
+
+## ✅ QA Testing Checklist – Convert Tools
+
+### 1. General UI/UX (Semua Tools)
+
+* [ ] Header ada icon + title betul (contoh: 📄 PDF → Word).
+* [ ] Subtitle jelas, explain apa tool buat.
+* [ ] Upload box style sama macam Edit tools.
+* [ ] Button utama pakai label jelas (“Convert Now”).
+* [ ] Progress bar/status keluar masa processing.
+* [ ] Output auto download dengan nama fail betul (contoh: `converted.docx`).
+* [ ] Error message keluar kalau upload file salah format.
+
+---
+
+### 2. **PDF → Word** (`/pdf-to-word`)
+
+* [ ] Upload 1 PDF → keluar dalam file list.
+* [ ] Klik **Convert Now** → tunggu progress → auto download `.docx`.
+* [ ] Fail asal nama `report.pdf` → output `report.docx`.
+* [ ] Cuba upload file bukan PDF → error keluar.
+
+---
+
+### 3. **PDF → Excel** (`/pdf-to-excel`)
+
+* [ ] Upload PDF → proses → auto download `.xlsx`.
+* [ ] Confirm nama output ikut nama asal (contoh `table.pdf` → `table.xlsx`).
+* [ ] Cuba fail bukan PDF → error keluar.
+
+---
+
+### 4. **PDF → PowerPoint** (`/pdf-to-ppt`)
+
+* [ ] Upload PDF → proses → auto download `.pptx`.
+* [ ] UI ada subtitle “Convert PDF slides into PowerPoint”.
+* [ ] Cuba upload fail selain PDF → error keluar.
+
+---
+
+### 5. **PDF → Image** (`/pdf-to-image`)
+
+* [ ] Dropdown pilihan format ada (PNG/JPG).
+* [ ] Upload PDF → proses → auto download `converted.png` / `converted.jpeg`.
+* [ ] Tukar format → confirm extension ikut format.
+* [ ] Upload file bukan PDF → error keluar.
+
+---
+
+### 6. **Image → PDF** (`/image-to-pdf`)
+
+* [ ] Boleh upload banyak image sekali gus.
+* [ ] File list keluar.
+* [ ] Klik **Convert Now** → auto download `converted.pdf`.
+* [ ] Cuba upload fail selain image → error keluar.
+
+---
+
+### 7. **Word → PDF** (`/word-to-pdf`)
+
+* [ ] Upload `.docx` / `.doc` → proses → auto download `.pdf`.
+* [ ] Output nama ikut fail asal (`document.docx` → `document.pdf`).
+* [ ] Cuba upload fail lain (contoh PDF) → error keluar.
+
+---
+
+### 8. Extra (QA Integration Check)
+
+* [ ] Test semua convert tools dalam **/convert-demo** → confirm UI seragam.
+* [ ] Semua button align sama (besar, center).
+* [ ] Semua progress flow rasa sama → tak ada tool yang tiba² lain style.
+* [ ] Dark mode check → text boleh baca, button color balance.
+* [ ] Clear file & upload baru jalan normal.
+
+---
+
+📌 Cadangan:
+
+* QA boleh tick senarai ni dalam Google Sheet/Notion → setiap tool, setiap test.
+* Bila integrate API sebenar nanti, sama checklist boleh recycle.
+
+👉 Bosss nak saya terus buat **QA Checklist versi Excel/CSV template** → senang bosss bagi team isi masa test?
