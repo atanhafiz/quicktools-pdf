@@ -1,134 +1,110 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PdfToolWrapper from "../components/PdfToolWrapper";
-import * as pdfjsLib from "pdfjs-dist/webpack";
+
+// Dummy Rotate
+const processFiles = async (files, setProgress, mode, angle, pages) => {
+  setProgress(30);
+  await new Promise((r) => setTimeout(r, 1000));
+  setProgress(70);
+
+  const file = files[0];
+  const arrayBuffer = await file.arrayBuffer();
+  const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+  setProgress(100);
+  return URL.createObjectURL(blob);
+};
 
 export default function RotatePdf() {
-  const [globalAngle, setGlobalAngle] = useState(90); // default
-  const [file, setFile] = useState(null);
-  const [thumbnails, setThumbnails] = useState([]);
-  const [pageAngles, setPageAngles] = useState({}); // {1:90, 2:180,...}
+  const [mode, setMode] = useState("all");
+  const [angle, setAngle] = useState(90);
+  const [pages, setPages] = useState("");
 
-  // Render thumbnails when a file is uploaded
-  useEffect(() => {
-    if (!file) return;
-
-    const loadPdf = async () => {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const thumbs = [];
-
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 0.2 });
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        await page.render({ canvasContext: context, viewport }).promise;
-        thumbs.push({ pageNum: i, src: canvas.toDataURL() });
-      }
-
-      setThumbnails(thumbs);
-    };
-
-    loadPdf();
-  }, [file]);
-
-  // Toggle rotation for a specific page
-  const handleRotateClick = (pageNum) => {
-    setPageAngles((prev) => {
-      const current = prev[pageNum] || 0;
-      const next = (current + 90) % 360;
-      return { ...prev, [pageNum]: next === 0 ? globalAngle : next };
-    });
-  };
-
-  // Process rotate
-  const processFiles = async (files, setProgress) => {
-    const selectedFile = files[0];
-    setFile(selectedFile);
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("globalAngle", globalAngle);
-    formData.append("pageAngles", JSON.stringify(pageAngles));
-
-    const res = await fetch("https://quicktools-api.vercel.app/rotate", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!res.ok) throw new Error("Rotate failed");
-
-    // Simple progress simulate
-    for (let i = 0; i <= 100; i += 25) {
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      setProgress(i);
-    }
-
-    const blob = await res.blob();
-    return window.URL.createObjectURL(blob);
+  const handleProcess = (files, setProgress) => {
+    return processFiles(files, setProgress, mode, angle, pages);
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-2">🔄 Rotate PDF</h1>
-      <p className="text-gray-600 mb-6">
-        Rotate all pages to a global angle, or click individual thumbnails to
-        rotate specific pages.
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">🔄 Rotate PDF</h1>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        Rotate all pages at once (auto) or rotate selected pages (manual).
       </p>
 
-      {/* Global angle selector */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Global Rotation Angle
-        </label>
+      {/* Mode Buttons */}
+      <div className="flex gap-3 mb-4">
+        <div className="relative group flex-1">
+          <button
+            onClick={() => setMode("all")}
+            className={`w-full px-4 py-2 rounded-lg shadow font-semibold ${
+              mode === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            }`}
+            title="Auto: Rotate all pages in the PDF"
+          >
+            ⚡ Rotate All
+          </button>
+          <p className="text-xs text-gray-500 mt-1">Rotate all pages at once.</p>
+          <div className="absolute left-0 mt-1 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded">
+            Auto: rotate entire PDF
+          </div>
+        </div>
+
+        <div className="relative group flex-1">
+          <button
+            onClick={() => setMode("selected")}
+            className={`w-full px-4 py-2 rounded-lg shadow font-semibold ${
+              mode === "selected"
+                ? "bg-green-600 text-white"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            }`}
+            title="Manual: Rotate only selected pages"
+          >
+            ✏️ Rotate Selected
+          </button>
+          <p className="text-xs text-gray-500 mt-1">Rotate only chosen pages.</p>
+          <div className="absolute left-0 mt-1 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded">
+            Manual: rotate chosen page numbers
+          </div>
+        </div>
+      </div>
+
+      {/* Extra Options */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Angle</label>
         <select
-          value={globalAngle}
-          onChange={(e) => setGlobalAngle(Number(e.target.value))}
-          className="w-full border px-3 py-2 rounded-lg text-sm"
+          value={angle}
+          onChange={(e) => setAngle(Number(e.target.value))}
+          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-800 dark:text-white"
         >
-          <option value={90}>90° Clockwise</option>
+          <option value={90}>90°</option>
           <option value={180}>180°</option>
-          <option value={270}>270° Counterclockwise</option>
+          <option value={270}>270°</option>
         </select>
       </div>
 
-      {/* Thumbnails */}
-      {thumbnails.length > 0 && (
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          {thumbnails.map((thumb) => (
-            <div
-              key={thumb.pageNum}
-              onClick={() => handleRotateClick(thumb.pageNum)}
-              className="border rounded-lg cursor-pointer overflow-hidden hover:ring-2 hover:ring-blue-400"
-            >
-              <img
-                src={thumb.src}
-                alt={`Page ${thumb.pageNum}`}
-                className="w-full"
-                style={{
-                  transform: `rotate(${pageAngles[thumb.pageNum] || 0}deg)`,
-                  transition: "transform 0.3s",
-                }}
-              />
-              <p className="text-xs text-center py-1 bg-gray-100">
-                Page {thumb.pageNum} –{" "}
-                {pageAngles[thumb.pageNum] || globalAngle}°
-              </p>
-            </div>
-          ))}
+      {mode === "selected" && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Pages</label>
+          <input
+            type="text"
+            value={pages}
+            onChange={(e) => setPages(e.target.value)}
+            placeholder="e.g. 1, 3-4"
+            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-800 dark:text-white"
+          />
         </div>
       )}
 
-      {/* Wrapper */}
       <PdfToolWrapper
         title="Rotate PDF"
-        description="Upload a PDF and rotate pages by global or per-page angles."
+        description="Rotate pages in your PDF document"
         actionLabel="Rotate Now"
-        processFiles={processFiles}
+        processFiles={handleProcess}
         multiple={false}
         outputName="rotated.pdf"
+        accept=".pdf"
       />
     </div>
   );

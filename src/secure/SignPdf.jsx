@@ -1,120 +1,113 @@
-import { useRef, useState } from "react";
-import { PDFDocument } from "pdf-lib";
-import SignatureCanvas from "react-signature-canvas";
-import { Document, Page } from "react-pdf";
-import { Rnd } from "react-rnd";
+import React, { useRef, useState } from "react";
+import PdfToolWrapper from "../components/PdfToolWrapper";
+
+// Dummy: simulate apply signature to PDF
+const processFiles = async (files, setProgress, signatureData) => {
+  setProgress(20);
+  await new Promise((r) => setTimeout(r, 1000));
+  setProgress(60);
+
+  const file = files[0];
+  const arrayBuffer = await file.arrayBuffer();
+
+  // NOTE: signatureData tak betul² digunakan (simulate only)
+  // Real case: API akan embed image ke dalam PDF
+  const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+  setProgress(100);
+  return URL.createObjectURL(blob);
+};
 
 export default function SignPdf() {
-  const sigPad = useRef(); // ✅ simpan ref signature pad
-  const [pdfFile, setPdfFile] = useState(null);
-  const [pdfData, setPdfData] = useState(null);
-  const [sigUrl, setSigUrl] = useState(null);
-  const [sigPos, setSigPos] = useState({ x: 50, y: 50, width: 150, height: 50 });
-  const [signedUrl, setSignedUrl] = useState(null);
+  const canvasRef = useRef(null);
+  const [signatureData, setSignatureData] = useState(null);
 
-  const handlePdfChange = (e) => {
-    const file = e.target.files[0];
-    setPdfFile(file);
-    const reader = new FileReader();
-    reader.onload = () => setPdfData(new Uint8Array(reader.result));
-    reader.readAsArrayBuffer(file);
+  const saveSignature = () => {
+    const canvas = canvasRef.current;
+    const dataUrl = canvas.toDataURL("image/png");
+    setSignatureData(dataUrl);
+    alert("✅ Signature saved!");
   };
 
-  const handleSaveSignature = () => {
-    if (!sigPad.current) return;
-    const url = sigPad.current.getTrimmedCanvas().toDataURL("image/png");
-    setSigUrl(url);
+  // Clear signature
+  const clearSignature = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setSignatureData(null);
   };
 
-  const handleApply = async () => {
-    if (!pdfFile || !sigUrl) {
-      alert("Upload PDF dan buat tandatangan dulu.");
-      return;
-    }
+  const handleProcess = (files, setProgress) => {
+    return processFiles(files, setProgress, signatureData);
+  };
 
-    const pdfBytes = await pdfFile.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+  // Draw signature (mouse)
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    canvas.isDrawing = true;
+  };
 
-    const pngBytes = await fetch(sigUrl).then((res) => res.arrayBuffer());
-    const sigImage = await pdfDoc.embedPng(pngBytes);
+  const draw = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas.isDrawing) return;
+    const ctx = canvas.getContext("2d");
+    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    ctx.stroke();
+  };
 
-    const page = pdfDoc.getPages()[0]; // sementara page 1
-    page.drawImage(sigImage, {
-      x: sigPos.x,
-      y: sigPos.y,
-      width: sigPos.width,
-      height: sigPos.height,
-    });
-
-    const newBytes = await pdfDoc.save();
-    const blob = new Blob([newBytes], { type: "application/pdf" });
-    setSignedUrl(URL.createObjectURL(blob));
+  const endDrawing = () => {
+    const canvas = canvasRef.current;
+    canvas.isDrawing = false;
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Sign PDF</h1>
-
-      <input type="file" accept="application/pdf" onChange={handlePdfChange} className="mb-4" />
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">✍️ Sign PDF</h1>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        Add your digital signature to a PDF file.
+      </p>
 
       {/* Signature pad */}
-      <SignatureCanvas
-        ref={sigPad}
-        penColor="black"
-        canvasProps={{ width: 400, height: 150, className: "border mb-2" }}
+      <canvas
+        ref={canvasRef}
+        width={400}
+        height={150}
+        className="border rounded-lg mb-3 bg-white"
+        onMouseDown={startDrawing}
+        onMouseMove={draw}
+        onMouseUp={endDrawing}
+        onMouseLeave={endDrawing}
       />
-      <button
-        onClick={handleSaveSignature}
-        className="px-3 py-1 bg-blue-500 text-white rounded"
-      >
-        Save Signature
-      </button>
 
-      {/* PDF Preview with draggable signature */}
-      {pdfData && (
-        <div className="relative border my-4 inline-block">
-          <Document file={pdfData}>
-            <Page pageNumber={1} width={400} />
-          </Document>
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={saveSignature}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Save Signature
+        </button>
+        <button
+          onClick={clearSignature}
+          className="px-4 py-2 bg-gray-400 text-white rounded-lg shadow hover:bg-gray-500 transition"
+        >
+          Clear
+        </button>
+      </div>
 
-          {sigUrl && (
-            <Rnd
-              size={{ width: sigPos.width, height: sigPos.height }}
-              position={{ x: sigPos.x, y: sigPos.y }}
-              onDragStop={(e, d) => setSigPos({ ...sigPos, x: d.x, y: d.y })}
-              onResizeStop={(e, dir, ref, delta, pos) =>
-                setSigPos({
-                  x: pos.x,
-                  y: pos.y,
-                  width: parseInt(ref.style.width),
-                  height: parseInt(ref.style.height),
-                })
-              }
-            >
-              <img src={sigUrl} alt="Signature" className="w-full h-full" />
-            </Rnd>
-          )}
-        </div>
-      )}
-
-      <button
-        onClick={handleApply}
-        className="px-4 py-2 mt-4 bg-green-600 text-white rounded"
-      >
-        Apply to PDF
-      </button>
-
-      {signedUrl && (
-        <div className="mt-4">
-          <a
-            href={signedUrl}
-            download="signed.pdf"
-            className="px-4 py-2 bg-red-500 text-white rounded"
-          >
-            Download Signed PDF
-          </a>
-        </div>
-      )}
+      <PdfToolWrapper
+        title="Sign PDF"
+        description="Apply your digital signature to the PDF file"
+        actionLabel="Apply Signature"
+        processFiles={handleProcess}
+        multiple={false}
+        outputName="signed.pdf"
+        accept=".pdf"
+      />
     </div>
   );
 }

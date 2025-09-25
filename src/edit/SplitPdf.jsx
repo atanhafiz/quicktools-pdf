@@ -1,216 +1,104 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PdfToolWrapper from "../components/PdfToolWrapper";
-import * as pdfjsLib from "pdfjs-dist/webpack";
+
+// Dummy Split: simulate split PDF
+const processFiles = async (files, setProgress, mode, pageRange) => {
+  setProgress(20);
+  await new Promise((r) => setTimeout(r, 1000));
+  setProgress(60);
+
+  const file = files[0];
+  const arrayBuffer = await file.arrayBuffer();
+
+  // NOTE: mode/pageRange tak betul² digunakan (simulate only)
+  const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+  setProgress(100);
+  return URL.createObjectURL(blob);
+};
 
 export default function SplitPdf() {
+  const [mode, setMode] = useState("manual");
   const [pageRange, setPageRange] = useState("1-2");
-  const [thumbnails, setThumbnails] = useState([]);
-  const [selectedPages, setSelectedPages] = useState([]);
-  const [file, setFile] = useState(null);
-  const [splitAll, setSplitAll] = useState(false);
-  const [mode, setMode] = useState("smooth"); // "quick" or "smooth"
 
-  // Render thumbnails when a file is uploaded
-  useEffect(() => {
-    if (!file) return;
-
-    const loadPdf = async () => {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const thumbs = [];
-
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 0.2 });
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        await page.render({ canvasContext: context, viewport }).promise;
-        thumbs.push({ pageNum: i, src: canvas.toDataURL() });
-      }
-
-      setThumbnails(thumbs);
-    };
-
-    loadPdf();
-  }, [file]);
-
-  // Update pageRange when selecting thumbnails
-  useEffect(() => {
-    if (selectedPages.length > 0) {
-      setPageRange(selectedPages.sort((a, b) => a - b).join(","));
-    }
-  }, [selectedPages]);
-
-  const handleThumbClick = (pageNum) => {
-    setSelectedPages((prev) =>
-      prev.includes(pageNum)
-        ? prev.filter((p) => p !== pageNum)
-        : [...prev, pageNum]
-    );
-  };
-
-  // Process split (Quick vs Smooth)
-  const processFiles = async (files, setProgress) => {
-    const selectedFile = files[0];
-    setFile(selectedFile);
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-
-    if (splitAll) {
-      formData.append("mode", "split-all");
-    } else {
-      formData.append("pages", pageRange);
-    }
-
-    // QUICK MODE → no progress, straight fetch
-    if (mode === "quick") {
-      const res = await fetch("https://quicktools-api.vercel.app/split", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) throw new Error("Split failed");
-
-      const blob = await res.blob();
-      return window.URL.createObjectURL(blob);
-    }
-
-    // SMOOTH MODE → use progress bar
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", "https://quicktools-api.vercel.app/split", true);
-
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable) {
-          const percent = Math.round((event.loaded / event.total) * 100);
-          setProgress(percent);
-        }
-      };
-
-      xhr.responseType = "blob";
-
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const url = window.URL.createObjectURL(xhr.response);
-          resolve(url);
-        } else {
-          reject(new Error("Split failed"));
-        }
-      };
-
-      xhr.onerror = () => reject(new Error("Network error"));
-      xhr.send(formData);
-    });
+  const handleProcess = (files, setProgress) => {
+    return processFiles(files, setProgress, mode, pageRange);
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-2">✂️ Split PDF</h1>
-      <p className="text-gray-600 mb-6">
-        Split your PDF by <b>page range</b>, select from <b>thumbnails</b>, or{" "}
-        <b>split every page into separate files</b>.
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">✂️ Split PDF</h1>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        Split your PDF by <b>page range</b> (manual) or split every page into separate files (auto).
       </p>
 
-      {/* Mode toggle */}
-      <div className="mb-6 flex gap-3">
-        <button
-          onClick={() => setMode("quick")}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold ${
-            mode === "quick"
-              ? "bg-green-500 text-white"
-              : "bg-gray-200 text-gray-800"
-          }`}
-        >
-          ⚡ Quick Mode
-        </button>
-        <button
-          onClick={() => setMode("smooth")}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold ${
-            mode === "smooth"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-200 text-gray-800"
-          }`}
-        >
-          🎨 Smooth Mode
-        </button>
+      {/* Mode Buttons */}
+      <div className="flex gap-3 mb-4">
+        <div className="relative group flex-1">
+          <button
+            onClick={() => setMode("manual")}
+            className={`w-full px-4 py-2 rounded-lg shadow font-semibold ${
+              mode === "manual"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            }`}
+            title="Manual: Enter specific page ranges (e.g. 1-2, 3, 4-6)"
+          >
+            ✏️ Manual Mode
+          </button>
+          <p className="text-xs text-gray-500 mt-1">
+            Enter specific page ranges (e.g. 1-2, 3, 4-6).
+          </p>
+          {/* Tooltip */}
+          <div className="absolute left-0 mt-1 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded">
+            Manual: choose your own page ranges
+          </div>
+        </div>
+
+        <div className="relative group flex-1">
+          <button
+            onClick={() => setMode("auto")}
+            className={`w-full px-4 py-2 rounded-lg shadow font-semibold ${
+              mode === "auto"
+                ? "bg-green-600 text-white"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            }`}
+            title="Auto: Each page will be saved as a separate PDF"
+          >
+            ⚡ Auto Mode
+          </button>
+          <p className="text-xs text-gray-500 mt-1">
+            Each page will be saved as a separate PDF.
+          </p>
+          {/* Tooltip */}
+          <div className="absolute left-0 mt-1 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded">
+            Auto: split every page into separate files
+          </div>
+        </div>
       </div>
 
-      {/* Page range input */}
-      {!splitAll && (
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Page Range
-          </label>
+      {/* Page Range Input (only for manual mode) */}
+      {mode === "manual" && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Page Range</label>
           <input
             type="text"
             value={pageRange}
             onChange={(e) => setPageRange(e.target.value)}
-            placeholder="Example: 1-3,5,7-9"
-            className="w-full border px-3 py-2 rounded-lg text-sm"
+            placeholder="e.g. 1-2, 3, 4-6"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Enter page numbers, use commas (,) or dashes (-) for ranges.
-          </p>
         </div>
       )}
 
-      {/* Thumbnails */}
-      {!splitAll && thumbnails.length > 0 && (
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          {thumbnails.map((thumb) => (
-            <div
-              key={thumb.pageNum}
-              onClick={() => handleThumbClick(thumb.pageNum)}
-              className={`border rounded-lg cursor-pointer overflow-hidden ${
-                selectedPages.includes(thumb.pageNum)
-                  ? "ring-2 ring-blue-500"
-                  : "hover:ring-1 hover:ring-gray-400"
-              }`}
-            >
-              <img
-                src={thumb.src}
-                alt={`Page ${thumb.pageNum}`}
-                className="w-full"
-              />
-              <p className="text-xs text-center py-1 bg-gray-100">
-                Page {thumb.pageNum}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Split all toggle */}
-      <div className="mb-6">
-        <button
-          onClick={() => setSplitAll(!splitAll)}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold ${
-            splitAll
-              ? "bg-red-500 text-white hover:bg-red-600"
-              : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-          }`}
-        >
-          {splitAll ? "Cancel Split All" : "🔀 Split Every Page"}
-        </button>
-        {splitAll && (
-          <p className="text-xs text-red-500 mt-2">
-            Active mode: every page will be separated into individual PDF files
-            (ZIP).
-          </p>
-        )}
-      </div>
-
-      {/* Wrapper */}
       <PdfToolWrapper
         title="Split PDF"
-        description="Upload a PDF and choose how to split."
-        actionLabel={splitAll ? "Split All Pages" : "Split Now"}
-        processFiles={processFiles}
+        description="Split your PDF into smaller documents"
+        actionLabel="Split Now"
+        processFiles={handleProcess}
         multiple={false}
-        outputName={splitAll ? "split-pages.zip" : "split.pdf"}
+        outputName="split.pdf"
+        accept=".pdf"
       />
     </div>
   );

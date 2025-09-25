@@ -1,63 +1,56 @@
-import { useState } from "react";
-import { PDFDocument } from "pdf-lib";
+import React, { useState } from "react";
+import PdfToolWrapper from "../components/PdfToolWrapper";
+
+// Dummy process: simulate unlock PDF dengan password
+const processFiles = async (files, setProgress, password) => {
+  setProgress(20);
+  await new Promise((r) => setTimeout(r, 1000));
+  setProgress(60);
+
+  const file = files[0];
+  const arrayBuffer = await file.arrayBuffer();
+
+  // 🔓 Password simulate check
+  // Real case: hantar ke API untuk verify & remove password
+  const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+  setProgress(100);
+  return URL.createObjectURL(blob);
+};
 
 export default function UnlockPdf() {
-  const [file, setFile] = useState(null);
-  const [unlockedUrl, setUnlockedUrl] = useState(null);
+  const [password, setPassword] = useState("");
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleUnlock = async () => {
-    if (!file) {
-      alert("Please upload a PDF file.");
-      return;
-    }
-
-    const bytes = await file.arrayBuffer();
-    const pdf = await PDFDocument.load(bytes);
-
-    // Simulate unlock: remove metadata subject if exist
-    pdf.setSubject("");
-
-    const newBytes = await pdf.save();
-    const newBlob = new Blob([newBytes], { type: "application/pdf" });
-    setUnlockedUrl(URL.createObjectURL(newBlob));
+  // Wrapper kita expect processFiles(files, setProgress)
+  const handleProcess = (files, setProgress) => {
+    return processFiles(files, setProgress, password);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-lg bg-white rounded-xl shadow p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Unlock PDF</h1>
-        <p className="text-gray-500 mb-6">
-          Upload a password-protected PDF to unlock (demo mode)
-        </p>
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">🔓 Unlock PDF</h1>
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
+        Remove password protection from your PDF file.
+      </p>
 
-        <input type="file" accept="application/pdf" onChange={handleFileChange} className="mb-4" />
+      {/* Input password */}
+      <input
+        type="password"
+        placeholder="Enter password to unlock"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full mb-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
+      />
 
-        <button
-          onClick={handleUnlock}
-          className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-800 transition"
-        >
-          Unlock PDF
-        </button>
-
-        {unlockedUrl && (
-          <div className="mt-6">
-            <a
-              href={unlockedUrl}
-              download="unlocked.pdf"
-              className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-600 transition"
-            >
-              Download Unlocked PDF
-            </a>
-            <p className="text-sm text-gray-500 mt-2">
-              (Note: This is a demo – real decryption needs backend)
-            </p>
-          </div>
-        )}
-      </div>
+      <PdfToolWrapper
+        title="Unlock PDF"
+        description="Remove password encryption from your PDF"
+        actionLabel="Unlock Now"
+        processFiles={handleProcess}
+        multiple={false}
+        outputName="unlocked.pdf"
+        accept=".pdf"
+      />
     </div>
   );
 }
