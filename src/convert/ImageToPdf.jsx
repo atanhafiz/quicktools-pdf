@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaFileImage, FaTrash } from "react-icons/fa";
 import PdfToolWrapper from "../components/PdfToolWrapper";
+import BackButton from "../components/BackButton"; // ✅ Import BackButton
 
 // Strict Image → PDF conversion simulation
 const processFiles = async (files, setProgress, outputName, setError, setFile) => {
@@ -56,10 +57,15 @@ export default function ImageToPdf() {
   return (
     <div className="flex justify-center items-start mt-16 px-4">
       <div className="w-full max-w-xl p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
-        {/* Header */}
-        <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-          🖼️ Image → PDF
-        </h1>
+        
+        {/* Header + Back Button */}
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            🖼️ Image → PDF
+          </h1>
+          <BackButton to="/dashboard/convert" />
+        </div>
+
         <p className="text-gray-700 dark:text-gray-200 mb-6">
           Combine one or more images into a single PDF file. Only image files are accepted.
         </p>
