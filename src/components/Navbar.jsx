@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
 
 export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // lock scroll bila menu terbuka
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
 
-  // apply dark mode ke <html>
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -22,7 +21,6 @@ export default function Navbar() {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  // framer-motion variants
   const containerVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -38,7 +36,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link to="/" className="group flex flex-col">
-            <span className="text-xl font-extrabold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent group-hover:from-pink-500 group-hover:to-yellow-500 transition">
+            <span className="text-xl font-extrabold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent group-hover:opacity-90 transition">
               QuickToolsPDF
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -47,7 +45,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex space-x-4">
+          <div className="hidden md:flex space-x-2">
             {[
               { path: "/", label: "Home" },
               { path: "/tools", label: "Tools Hub" },
@@ -60,10 +58,10 @@ export default function Navbar() {
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                  `px-3 py-1 rounded-lg shadow-md transition ${
+                  `px-3 py-1 rounded-lg transition font-medium ${
                     isActive
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-gray-700"
+                      ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600"
+                      : "text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400"
                   }`
                 }
               >
@@ -71,15 +69,15 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            {/* 🧪 Demo Hub hanya keluar waktu development */}
+            {/* Dev only: Demo Hub */}
             {process.env.NODE_ENV === "development" && (
               <NavLink
                 to="/demo-hub"
                 className={({ isActive }) =>
-                  `px-3 py-1 rounded-lg shadow-md transition ${
+                  `px-3 py-1 rounded-lg transition font-medium ${
                     isActive
-                      ? "bg-purple-600 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-purple-100 dark:hover:bg-gray-700"
+                      ? "text-purple-600 dark:text-purple-400 border-b-2 border-purple-600"
+                      : "text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400"
                   }`
                 }
               >
@@ -94,14 +92,14 @@ export default function Navbar() {
             <button
               onClick={() => setDarkMode(!darkMode)}
               title="Switch Theme"
-              className="px-3 py-1 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-semibold transition transform hover:rotate-12"
+              className="w-9 h-9 flex items-center justify-center rounded-full shadow-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 transition hover:rotate-12"
             >
               {darkMode ? "☀️" : "🌙"}
             </button>
             {/* Start Free CTA */}
             <Link
               to="/tools"
-              className="px-5 py-2 rounded-lg font-bold text-white shadow-md bg-gradient-to-r from-blue-500 to-purple-600 hover:from-purple-600 hover:to-pink-500 transition animate-pulse"
+              className="px-5 py-2 rounded-lg font-bold text-white shadow-md bg-gradient-to-r from-blue-500 to-purple-600 hover:from-purple-600 hover:to-pink-500 transition transform hover:scale-105"
             >
               🚀 Start Free
             </Link>
@@ -175,10 +173,10 @@ export default function Navbar() {
                       to={link.path}
                       onClick={toggleMenu}
                       className={({ isActive }) =>
-                        `block px-3 py-2 rounded-lg shadow-md ${
+                        `block px-3 py-2 rounded-lg font-medium ${
                           isActive
                             ? "bg-blue-600 text-white"
-                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-gray-700"
                         }`
                       }
                     >
@@ -194,10 +192,10 @@ export default function Navbar() {
                       to="/demo-hub"
                       onClick={toggleMenu}
                       className={({ isActive }) =>
-                        `block px-3 py-2 rounded-lg shadow-md ${
+                        `block px-3 py-2 rounded-lg font-medium ${
                           isActive
                             ? "bg-purple-600 text-white"
-                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-purple-100 dark:hover:bg-gray-700"
                         }`
                       }
                     >
@@ -218,23 +216,29 @@ export default function Navbar() {
                 }}
                 className="px-3 py-2 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-semibold"
               >
-                {darkMode ? "☀️ Light" : "🌙 Dark"}
+                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
               </button>
 
               {/* Start Free */}
               <Link
                 to="/tools"
                 onClick={toggleMenu}
-                className="px-4 py-3 rounded-lg bg-blue-600 text-white font-bold shadow-inner text-center"
+                className="px-4 py-3 rounded-lg bg-blue-600 text-white font-bold shadow-lg text-center hover:bg-blue-700 transition"
               >
                 🚀 Start Free
               </Link>
 
               {/* Social links */}
-              <div className="flex justify-center gap-4 mt-6 text-gray-600 dark:text-gray-300">
-                <a href="https://twitter.com" target="_blank" rel="noreferrer">🐦</a>
-                <a href="https://linkedin.com" target="_blank" rel="noreferrer">💼</a>
-                <a href="https://github.com" target="_blank" rel="noreferrer">💻</a>
+              <div className="flex justify-center gap-6 mt-6 text-gray-600 dark:text-gray-300 text-xl">
+                <a href="https://twitter.com" target="_blank" rel="noreferrer">
+                  <FaTwitter className="hover:text-blue-500 transition" />
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer">
+                  <FaLinkedin className="hover:text-blue-700 transition" />
+                </a>
+                <a href="https://github.com" target="_blank" rel="noreferrer">
+                  <FaGithub className="hover:text-gray-900 dark:hover:text-white transition" />
+                </a>
               </div>
             </motion.div>
           </>

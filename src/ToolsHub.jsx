@@ -7,6 +7,7 @@ export default function ToolsHub() {
   const categories = [
     {
       title: "✂️ Edit PDF",
+      accent: "text-blue-500",
       tools: [
         { icon: "🔗", name: "Merge PDF", path: "/merge", desc: "Combine multiple PDFs into one" },
         { icon: "✂️", name: "Split PDF", path: "/split", desc: "Split a PDF into separate files" },
@@ -17,6 +18,7 @@ export default function ToolsHub() {
     },
     {
       title: "🔄 Convert PDF",
+      accent: "text-green-500",
       tools: [
         { icon: "📄", name: "PDF → Word", path: "/pdf-to-word", desc: "Convert PDF to editable Word document" },
         { icon: "📝", name: "Word → PDF", path: "/word-to-pdf", desc: "Convert Word documents to PDF" },
@@ -28,6 +30,7 @@ export default function ToolsHub() {
     },
     {
       title: "🔐 Secure PDF",
+      accent: "text-red-500",
       tools: [
         { icon: "🔒", name: "Protect PDF", path: "/protect", desc: "Add password protection to PDF" },
         { icon: "🔓", name: "Unlock PDF", path: "/unlock", desc: "Remove password protection" },
@@ -38,6 +41,7 @@ export default function ToolsHub() {
     },
     {
       title: "🤖 Smart AI",
+      accent: "text-purple-500",
       tools: [
         { icon: "👁️", name: "OCR PDF", path: "/ocr", desc: "Recognize text from scanned PDFs" },
         { icon: "🤖", name: "AI Summary", path: "/ai-summary", desc: "Generate automatic summaries" },
@@ -48,18 +52,30 @@ export default function ToolsHub() {
 
   return (
     <PageWrapper title="🚀 QuickTools PDF Hub">
-      {/* Stats Counter with props */}
-      <StatsCounter 
-        files={10000000}   // 10M files
-        users={200000}     // 200k users
+      {/* Intro Section */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+          Explore All Tools in One Hub
+        </h1>
+        <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+          Edit, Convert, Secure, and Automate your PDFs with Smart AI — choose from 20+ tools below.
+        </p>
+      </div>
+
+      {/* Stats Counter */}
+      <StatsCounter
+        files={10000000} // 10M files
+        users={200000} // 200k users
         uptime={99.9}
         countries={80}
       />
 
       {/* Tool Categories */}
       {categories.map((cat, i) => (
-        <div key={i} className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{cat.title}</h2>
+        <div key={i} className="mb-16">
+          <h2 className={`text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100 border-b pb-2 ${cat.accent}`}>
+            {cat.title}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {cat.tools.map((tool, j) => (
               <Link
@@ -68,7 +84,9 @@ export default function ToolsHub() {
                 className="block bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 p-6 text-center sm:text-left"
               >
                 <div className="text-3xl mb-3">{tool.icon}</div>
-                <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-gray-100">{tool.name}</h3>
+                <h3 className="text-lg font-semibold mb-1 text-gray-900 dark:text-gray-100">
+                  {tool.name}
+                </h3>
                 <p className="text-gray-700 dark:text-gray-300 text-sm">{tool.desc}</p>
               </Link>
             ))}
