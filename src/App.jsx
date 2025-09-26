@@ -1,7 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./ThemeContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import React, { Suspense } from "react";
 
 // ====== MAIN PAGES ======
 import Landing from "./pages/Landing";
@@ -38,6 +40,61 @@ import Contact from "./pages/Contact";
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Pricing from "./pages/Pricing";
+
+// ====== DEMO TOOLSHUB (Dev Only) ======
+let DemoRoutes = null;
+if (process.env.NODE_ENV !== "production") {
+  const EditToolsDemo = React.lazy(() => import("./pages/demo/EditToolsDemo.jsx"));
+  const ConvertToolsDemo = React.lazy(() => import("./pages/demo/ConvertToolsDemo.jsx"));
+  const SecureToolsDemo = React.lazy(() => import("./pages/demo/SecureToolsDemo.jsx"));
+  const SmartAIToolsDemo = React.lazy(() => import("./pages/demo/SmartAIToolsDemo.jsx"));
+  const ToolsDemoHub = React.lazy(() => import("./pages/demo/ToolsDemoHub.jsx"));
+
+  DemoRoutes = (
+    <>
+      <Route
+        path="/edit-demo"
+        element={
+          <Suspense fallback={<div>Loading...</div>}>
+            <EditToolsDemo />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/convert-demo"
+        element={
+          <Suspense fallback={<div>Loading...</div>}>
+            <ConvertToolsDemo />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/secure-demo"
+        element={
+          <Suspense fallback={<div>Loading...</div>}>
+            <SecureToolsDemo />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/smartai-demo"
+        element={
+          <Suspense fallback={<div>Loading...</div>}>
+            <SmartAIToolsDemo />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/demo-hub"
+        element={
+          <Suspense fallback={<div>Loading...</div>}>
+            <ToolsDemoHub />
+          </Suspense>
+        }
+      />
+    </>
+  );
+}
 
 function App() {
   return (
@@ -90,6 +147,12 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/pricing" element={<Pricing />} />
+
+              {/* DEMO ROUTES (Dev Only) */}
+              {DemoRoutes}
+
+              {/* CATCH-ALL 404 → Redirect Landing */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
           <Footer />

@@ -6,7 +6,7 @@ export default function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // disable scroll belakang bila menu terbuka
+  // lock scroll bila menu terbuka
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
@@ -20,30 +20,12 @@ export default function Navbar() {
     }
   }, [darkMode]);
 
-  // play sound
-  const playSound = (file) => {
-    const audio = new Audio(file);
-    audio.volume = 0.3; // lembut sikit
-    audio.play().catch(() => {});
-  };
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  // handle menu toggle
-  const toggleMenu = () => {
-    if (!menuOpen) {
-      playSound("/sounds/open.mp3"); // bunyi buka
-    } else {
-      playSound("/sounds/close.mp3"); // bunyi tutup
-    }
-    setMenuOpen(!menuOpen);
-  };
-
-  // framer-motion variants untuk stagger link animation
+  // framer-motion variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
   const itemVariants = {
     hidden: { x: 50, opacity: 0 },
@@ -54,7 +36,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          {/* Left: Logo + tagline */}
+          {/* Logo */}
           <Link to="/" className="group flex flex-col">
             <span className="text-xl font-extrabold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent group-hover:from-pink-500 group-hover:to-yellow-500 transition">
               QuickToolsPDF
@@ -64,7 +46,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Center: Nav Links (desktop only) */}
+          {/* Desktop Nav Links */}
           <div className="hidden md:flex space-x-4">
             {[
               { path: "/", label: "Home" },
@@ -88,11 +70,27 @@ export default function Navbar() {
                 {link.label}
               </NavLink>
             ))}
+
+            {/* 🧪 Demo Hub hanya keluar waktu development */}
+            {process.env.NODE_ENV === "development" && (
+              <NavLink
+                to="/demo-hub"
+                className={({ isActive }) =>
+                  `px-3 py-1 rounded-lg shadow-md transition ${
+                    isActive
+                      ? "bg-purple-600 text-white"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-purple-100 dark:hover:bg-gray-700"
+                  }`
+                }
+              >
+                🧪 Demo Hub
+              </NavLink>
+            )}
           </div>
 
-          {/* Right: Desktop CTA + Dark/Light toggle */}
+          {/* Right: Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
-            {/* Mode toggle */}
+            {/* Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
               title="Switch Theme"
@@ -121,7 +119,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu with Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <>
@@ -135,12 +133,12 @@ export default function Navbar() {
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
             />
 
-            {/* Slide-in Menu with swipe support */}
+            {/* Slide-in panel */}
             <motion.div
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
               onDragEnd={(e, info) => {
-                if (info.offset.x < -100) toggleMenu(); // swipe left close
+                if (info.offset.x < -100) toggleMenu();
               }}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
@@ -148,7 +146,7 @@ export default function Navbar() {
               transition={{ duration: 0.4, ease: "easeInOut" }}
               className="fixed top-0 right-0 w-64 h-full bg-white dark:bg-gray-900 shadow-2xl p-6 flex flex-col gap-4 z-50 md:hidden"
             >
-              {/* Close button top right */}
+              {/* Close button */}
               <button
                 onClick={toggleMenu}
                 className="self-end text-2xl text-gray-800 dark:text-gray-100 mb-6 transform hover:rotate-90 transition"
@@ -156,7 +154,7 @@ export default function Navbar() {
                 ✖
               </button>
 
-              {/* Links with stagger animation */}
+              {/* Links */}
               <motion.div
                 initial="hidden"
                 animate="show"
@@ -188,6 +186,25 @@ export default function Navbar() {
                     </NavLink>
                   </motion.div>
                 ))}
+
+                {/* Demo Hub for dev */}
+                {process.env.NODE_ENV === "development" && (
+                  <motion.div variants={itemVariants}>
+                    <NavLink
+                      to="/demo-hub"
+                      onClick={toggleMenu}
+                      className={({ isActive }) =>
+                        `block px-3 py-2 rounded-lg shadow-md ${
+                          isActive
+                            ? "bg-purple-600 text-white"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                        }`
+                      }
+                    >
+                      🧪 Demo Hub
+                    </NavLink>
+                  </motion.div>
+                )}
               </motion.div>
 
               {/* Divider */}
@@ -213,7 +230,7 @@ export default function Navbar() {
                 🚀 Start Free
               </Link>
 
-              {/* Social Links */}
+              {/* Social links */}
               <div className="flex justify-center gap-4 mt-6 text-gray-600 dark:text-gray-300">
                 <a href="https://twitter.com" target="_blank" rel="noreferrer">🐦</a>
                 <a href="https://linkedin.com" target="_blank" rel="noreferrer">💼</a>
