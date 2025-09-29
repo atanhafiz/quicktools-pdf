@@ -1,0 +1,10 @@
+export { default as MergePDF } from "./MergePDF";
+export { default as CompressPDF } from "./CompressPDF";
+export { default as SplitPDF } from "./SplitPDF";
+export { default as ConvertPDF } from "./ConvertPDF";
+export { default as OCRPDF } from "./OCRPDF";
+export { default as SignPDF } from "./SignPDF";
+export { default as EditPDF } from "./EditPDF";
+export { default as SecurePDF } from "./SecurePDF";
+export { default as UnlockPDF } from "./UnlockPDF";
+export { default as PDFtoJPG } from "./PDFtoJPG";

@@ -3,12 +3,10 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
 import PageWrapper from "../components/PageWrapper";
-import BrowserMockup from "../components/BrowserMockup";
-import Testimonials from "../components/Testimonials";
 import StatsCounter from "../components/StatsCounter";
 import { FaEdit, FaExchangeAlt, FaLock, FaRobot } from "react-icons/fa";
 
-export default function Landing() {
+function Landing() {
   const [count, setCount] = useState(0);
   const [liveFiles, setLiveFiles] = useState(0);
   const [wording, setWording] = useState("files processed today");
@@ -87,10 +85,14 @@ export default function Landing() {
       {/* Hero Section */}
       <div className="text-center mb-20">
         <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
-          All-in-One <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">PDF & AI Toolkit</span>
+          All-in-One{" "}
+          <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            PDF & AI Toolkit
+          </span>
         </h1>
         <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto mb-8">
-          Edit, convert, secure, and enhance your documents instantly. Trusted by students, professionals, and businesses worldwide.
+          Edit, convert, secure, and enhance your documents instantly. Trusted
+          by students, professionals, and businesses worldwide.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
@@ -114,20 +116,26 @@ export default function Landing() {
       {/* Live Counter */}
       <div className="max-w-3xl mx-auto mb-16 text-center">
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-md p-4">
-          🚀 <span className="font-bold">{liveFiles.toLocaleString()}</span> {wording}
+          🚀 <span className="font-bold">{liveFiles.toLocaleString()}</span>{" "}
+          {wording}
         </div>
       </div>
 
       {/* Mini Testimonials Carousel */}
       <div className="max-w-6xl mx-auto mb-20 text-center">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">What early users are saying</h3>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+          What early users are saying
+        </h3>
         <Slider {...sliderSettings}>
           {miniTestimonials.map((t, i) => (
             <div key={i} className="px-4">
               <motion.div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 h-full hover:shadow-lg transition">
-                <p className="text-gray-700 dark:text-gray-300 text-sm italic mb-3">“{t.feedback}”</p>
+                <p className="text-gray-700 dark:text-gray-300 text-sm italic mb-3">
+                  “{t.feedback}”
+                </p>
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                  {t.name} <span className="text-xs text-gray-500">– {t.role}</span>
+                  {t.name}{" "}
+                  <span className="text-xs text-gray-500">– {t.role}</span>
                 </p>
               </motion.div>
             </div>
@@ -138,14 +146,35 @@ export default function Landing() {
       {/* Features */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-20">
         {[
-          { icon: <FaEdit className="text-4xl text-blue-500 mx-auto" />, title: "Edit PDF", desc: "Merge, split, rotate, and organize your PDFs easily." },
-          { icon: <FaExchangeAlt className="text-4xl text-green-500 mx-auto" />, title: "Convert", desc: "PDF to Word, Excel, PPT, Image, and vice versa." },
-          { icon: <FaLock className="text-4xl text-red-500 mx-auto" />, title: "Secure", desc: "Protect with password, unlock, sign, and watermark." },
-          { icon: <FaRobot className="text-4xl text-purple-500 mx-auto" />, title: "Smart AI", desc: "OCR, summaries, and AI-powered form filling." },
+          {
+            icon: <FaEdit className="text-4xl text-blue-500 mx-auto" />,
+            title: "Edit PDF",
+            desc: "Merge, split, rotate, and organize your PDFs easily.",
+          },
+          {
+            icon: <FaExchangeAlt className="text-4xl text-green-500 mx-auto" />,
+            title: "Convert",
+            desc: "PDF to Word, Excel, PPT, Image, and vice versa.",
+          },
+          {
+            icon: <FaLock className="text-4xl text-red-500 mx-auto" />,
+            title: "Secure",
+            desc: "Protect with password, unlock, sign, and watermark.",
+          },
+          {
+            icon: <FaRobot className="text-4xl text-purple-500 mx-auto" />,
+            title: "Smart AI",
+            desc: "OCR, summaries, and AI-powered form filling.",
+          },
         ].map((f, i) => (
-          <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1 transition p-6 text-center">
+          <div
+            key={i}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl hover:-translate-y-1 transition p-6 text-center"
+          >
             {f.icon}
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mt-3 mb-2">{f.title}</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mt-3 mb-2">
+              {f.title}
+            </h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm">{f.desc}</p>
           </div>
         ))}
@@ -163,11 +192,15 @@ export default function Landing() {
               How to Merge PDF Online Free
             </h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-              Learn how to merge PDF files online for free with QuickTools Tech. Fast, secure, and easy to use.
+              Learn how to merge PDF files online for free with QuickTools Tech.
+              Fast, secure, and easy to use.
             </p>
-            <a href="/merge" className="text-blue-500 font-semibold hover:underline">
+            <Link
+              to="/blog/merge-pdf-online"
+              className="text-blue-500 font-semibold hover:underline"
+            >
               Read More →
-            </a>
+            </Link>
           </div>
 
           {/* Article 2 */}
@@ -176,11 +209,15 @@ export default function Landing() {
               Best Free Tools to Convert PDF to Word
             </h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-              Convert your PDFs to editable Word documents instantly with QuickTools Tech – free & easy.
+              Convert your PDFs to editable Word documents instantly with
+              QuickTools Tech – free & easy.
             </p>
-            <a href="/pdf-to-word" className="text-blue-500 font-semibold hover:underline">
+            <Link
+              to="/blog/convert-pdf-to-word"
+              className="text-blue-500 font-semibold hover:underline"
+            >
               Read More →
-            </a>
+            </Link>
           </div>
 
           {/* Article 3 */}
@@ -189,20 +226,32 @@ export default function Landing() {
               AI Tools to Summarize PDF in Seconds
             </h3>
             <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-              Use QuickTools AI to auto-summarize long PDFs into short key points. Save hours of reading.
+              Use QuickTools AI to auto-summarize long PDFs into short key
+              points. Save hours of reading.
             </p>
-            <a href="/ai-summary" className="text-blue-500 font-semibold hover:underline">
+            <Link
+              to="/blog/ai-summarize-pdf"
+              className="text-blue-500 font-semibold hover:underline"
+            >
               Read More →
-            </a>
+            </Link>
           </div>
         </div>
       </div>
 
       {/* Final CTA */}
       <div className="w-full max-w-5xl bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-10 text-center text-white mx-auto">
-        <h2 className="text-3xl font-bold mb-4">Ready to Boost Your Productivity?</h2>
-        <p className="mb-6 text-lg">Join thousands of users who trust QuickToolsPDF to simplify their workflow.</p>
-        <Link to="/tools" className="px-10 py-4 bg-white text-blue-600 font-bold rounded-lg shadow-md hover:bg-gray-100 transition">
+        <h2 className="text-3xl font-bold mb-4">
+          Ready to Boost Your Productivity?
+        </h2>
+        <p className="mb-6 text-lg">
+          Join thousands of users who trust QuickToolsPDF to simplify their
+          workflow.
+        </p>
+        <Link
+          to="/tools"
+          className="px-10 py-4 bg-white text-blue-600 font-bold rounded-lg shadow-md hover:bg-gray-100 transition"
+        >
           🚀 Get Started Free
         </Link>
       </div>
@@ -219,3 +268,5 @@ export default function Landing() {
     </PageWrapper>
   );
 }
+
+export default Landing;

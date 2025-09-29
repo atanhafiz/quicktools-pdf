@@ -13,6 +13,8 @@ import DashboardConvert from "./pages/DashboardConvert";
 import DashboardSecure from "./pages/DashboardSecure";
 import DashboardSmartAI from "./pages/DashboardSmartAI";
 import ToolsHub from "./ToolsHub";
+import Blog from "./pages/Blog";
+import ArticlePage from "./pages/ArticlePage";
 
 // ====== TOOLS ======
 import MergePdf from "./edit/MergePdf";
@@ -41,6 +43,12 @@ import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Pricing from "./pages/Pricing";
 
+// ====== SEO PAGES ======
+import { 
+  MergePDF, CompressPDF, SplitPDF, ConvertPDF, OCRPDF,
+  SignPDF, EditPDF, SecurePDF, UnlockPDF, PDFtoJPG
+} from "./pages/seo";
+
 // ====== DEMO TOOLSHUB (Dev Only) ======
 let DemoRoutes = null;
 if (process.env.NODE_ENV !== "production") {
@@ -52,46 +60,11 @@ if (process.env.NODE_ENV !== "production") {
 
   DemoRoutes = (
     <>
-      <Route
-        path="/edit-demo"
-        element={
-          <Suspense fallback={<div>Loading...</div>}>
-            <EditToolsDemo />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/convert-demo"
-        element={
-          <Suspense fallback={<div>Loading...</div>}>
-            <ConvertToolsDemo />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/secure-demo"
-        element={
-          <Suspense fallback={<div>Loading...</div>}>
-            <SecureToolsDemo />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/smartai-demo"
-        element={
-          <Suspense fallback={<div>Loading...</div>}>
-            <SmartAIToolsDemo />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/demo-hub"
-        element={
-          <Suspense fallback={<div>Loading...</div>}>
-            <ToolsDemoHub />
-          </Suspense>
-        }
-      />
+      <Route path="/edit-demo" element={<Suspense fallback={<div>Loading...</div>}><EditToolsDemo /></Suspense>} />
+      <Route path="/convert-demo" element={<Suspense fallback={<div>Loading...</div>}><ConvertToolsDemo /></Suspense>} />
+      <Route path="/secure-demo" element={<Suspense fallback={<div>Loading...</div>}><SecureToolsDemo /></Suspense>} />
+      <Route path="/smartai-demo" element={<Suspense fallback={<div>Loading...</div>}><SmartAIToolsDemo /></Suspense>} />
+      <Route path="/demo-hub" element={<Suspense fallback={<div>Loading...</div>}><ToolsDemoHub /></Suspense>} />
     </>
   );
 }
@@ -107,6 +80,10 @@ function App() {
               {/* LANDING */}
               <Route path="/" element={<Landing />} />
               <Route path="/tools" element={<ToolsHub />} />
+
+              {/* BLOG */}
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<ArticlePage />} />
 
               {/* DASHBOARD */}
               <Route path="/dashboard" element={<Dashboard />} />
@@ -147,6 +124,18 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/pricing" element={<Pricing />} />
+
+              {/* SEO ROUTES */}
+              <Route path="/seo/merge" element={<MergePDF />} />
+              <Route path="/seo/compress" element={<CompressPDF />} />
+              <Route path="/seo/split" element={<SplitPDF />} />
+              <Route path="/seo/convert" element={<ConvertPDF />} />
+              <Route path="/seo/ocr" element={<OCRPDF />} />
+              <Route path="/seo/sign" element={<SignPDF />} />
+              <Route path="/seo/edit" element={<EditPDF />} />
+              <Route path="/seo/secure" element={<SecurePDF />} />
+              <Route path="/seo/unlock" element={<UnlockPDF />} />
+              <Route path="/seo/pdf-to-jpg" element={<PDFtoJPG />} />
 
               {/* DEMO ROUTES (Dev Only) */}
               {DemoRoutes}
