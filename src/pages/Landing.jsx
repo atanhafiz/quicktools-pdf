@@ -151,6 +151,53 @@ export default function Landing() {
         ))}
       </div>
 
+      {/* Blog Section */}
+      <div className="max-w-6xl mx-auto mb-20 px-4">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-10 text-center">
+          📚 Latest Articles
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Article 1 */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-xl transition">
+            <h3 className="text-xl font-semibold text-blue-600 mb-3">
+              How to Merge PDF Online Free
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
+              Learn how to merge PDF files online for free with QuickTools Tech. Fast, secure, and easy to use.
+            </p>
+            <a href="/merge" className="text-blue-500 font-semibold hover:underline">
+              Read More →
+            </a>
+          </div>
+
+          {/* Article 2 */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-xl transition">
+            <h3 className="text-xl font-semibold text-blue-600 mb-3">
+              Best Free Tools to Convert PDF to Word
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
+              Convert your PDFs to editable Word documents instantly with QuickTools Tech – free & easy.
+            </p>
+            <a href="/pdf-to-word" className="text-blue-500 font-semibold hover:underline">
+              Read More →
+            </a>
+          </div>
+
+          {/* Article 3 */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-xl transition">
+            <h3 className="text-xl font-semibold text-blue-600 mb-3">
+              AI Tools to Summarize PDF in Seconds
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
+              Use QuickTools AI to auto-summarize long PDFs into short key points. Save hours of reading.
+            </p>
+            <a href="/ai-summary" className="text-blue-500 font-semibold hover:underline">
+              Read More →
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* Final CTA */}
       <div className="w-full max-w-5xl bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-10 text-center text-white mx-auto">
         <h2 className="text-3xl font-bold mb-4">Ready to Boost Your Productivity?</h2>
