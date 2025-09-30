@@ -1,5 +1,0 @@
-# Paksa HTTPS
-http://*   https://quicktoolstech.com/:splat   301!
-
-# Paksa non-www
-https://www.quicktoolstech.com/*   https://quicktoolstech.com/:splat   301!
