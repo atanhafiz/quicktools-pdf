@@ -1,0 +1,23 @@
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+    X-Robots-Tag = "all"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    X-Robots-Tag = "all"
+
+[[redirects]]
+  from = "http://*"
+  to = "https://quicktoolstech.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.quicktoolstech.com/*"
+  to = "https://quicktoolstech.com/:splat"
+  status = 301
+  force = true
