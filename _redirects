@@ -1,2 +1,0 @@
-# Redirect all www traffic to root domain
-https://www.quicktoolstech.com/*   https://quicktoolstech.com/:splat   301!
