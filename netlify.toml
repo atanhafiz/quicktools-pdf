@@ -21,3 +21,9 @@
   to = "https://quicktoolstech.com/:splat"
   status = 301
   force = true
+
+# SPA fallback - redirect all non-file requests to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
