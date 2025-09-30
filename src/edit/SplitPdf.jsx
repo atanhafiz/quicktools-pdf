@@ -53,13 +53,13 @@ export default function SplitPdf() {
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            ✂️ Split PDF
+            ✂️ Split PDF – Extract pages easily
           </h1>
           <BackButton to="/dashboard/edit" />
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Split your PDF by <b>page range</b> (manual) or split every page into separate files (auto).
+          Fast, secure, and works on any device. Works on desktop, tablet, and mobile.
         </p>
 
         {/* Mode Buttons with Tooltip */}

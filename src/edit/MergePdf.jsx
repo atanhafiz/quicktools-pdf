@@ -51,13 +51,13 @@ export default function MergePdf() {
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            📎 Merge PDF
+            📎 Merge multiple PDF files into one document
           </h1>
           <BackButton to="/dashboard/edit" />
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Combine multiple PDF files into a single document.
+          Fast, secure, and works on any device. Files are automatically deleted after 1 hour for your security.
         </p>
 
         {/* Mode Buttons with Tooltip */}
@@ -138,7 +138,7 @@ export default function MergePdf() {
         <PdfToolWrapper
           key={resetKey}
           title="Merge PDF"
-          description="Combine multiple PDFs into one file"
+          description="Drag & Drop your PDF files here, or click Upload to select from your device."
           actionLabel="Merge Now"
           processFiles={handleProcess}
           multiple={true}

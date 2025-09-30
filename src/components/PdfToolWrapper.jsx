@@ -132,10 +132,10 @@ export default function PdfToolWrapper({
             htmlFor="fileInput"
             className="inline-block px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-lg shadow hover:opacity-90 transition"
           >
-            📂 Choose File{multiple && "s"}
+            📂 Upload Files
           </label>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Drag & drop your file{multiple && "s"} here or click the button above
+            Drag & Drop your files here, or click Upload to select from your device.
           </p>
         </div>
       )}
@@ -227,7 +227,7 @@ export default function PdfToolWrapper({
               download={resultName}
               className="block w-full px-8 py-3 mb-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-bold shadow-lg hover:opacity-90 transition"
             >
-              ⬇️ Download {resultName}
+              ⬇️ Download Result
             </a>
             <button
               onClick={() => {

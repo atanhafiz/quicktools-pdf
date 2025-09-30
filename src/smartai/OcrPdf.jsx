@@ -51,13 +51,13 @@ export default function OcrPdf() {
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            🔎 OCR PDF
+            🔎 OCR PDF – Turn scans into editable text
           </h1>
           <BackButton to="/dashboard/smartai" />
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Extract text content from scanned PDF files.
+          AI-powered OCR accuracy. No registration required – 100% free to use.
         </p>
 
         {/* Output Name Input */}

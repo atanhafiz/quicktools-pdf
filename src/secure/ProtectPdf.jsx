@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PdfToolWrapper from "../components/PdfToolWrapper";
 import BackButton from "../components/BackButton"; // ✅ Import BackButton
 
-// Dummy process: simulate protect PDF dengan password
+// Dummy process: simulate protect PDF with password
 const processFiles = async (files, setProgress, password, outputName, setError) => {
   try {
     if (!files.length) throw new Error("Please upload a PDF file.");
@@ -55,13 +55,13 @@ export default function ProtectPdf() {
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            🔒 Protect PDF
+            🔒 Protect PDF – Add password & encryption
           </h1>
           <BackButton to="/dashboard/secure" />
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Add password protection to your PDF file.
+          Fast, secure, and works on any device. High quality output guaranteed.
         </p>
 
         {/* Input password */}
@@ -112,7 +112,7 @@ export default function ProtectPdf() {
         <PdfToolWrapper
           key={resetKey}
           title="Protect PDF"
-          description="Secure your PDF with password encryption"
+          description="Drag & Drop your PDF files here, or click Upload to select from your device."
           actionLabel="Protect Now"
           processFiles={handleProcess}
           multiple={false}

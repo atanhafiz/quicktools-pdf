@@ -11,10 +11,10 @@ const processFiles = async (files, setProgress, outputName, setError, setFile) =
       throw new Error("Invalid file type. Please upload a PDF file only.");
     }
 
-    // Default output name ikut nama asal
+    // Default output name follows original name
     let defaultName = file.name.replace(/\.pdf$/i, ".docx");
 
-    // Kalau user tulis nama tapi lupa extension → tambah .docx
+    // If user enters name but forgets extension → add .docx
     let finalName = outputName && outputName.trim() !== "" ? outputName : defaultName;
     if (!finalName.toLowerCase().endsWith(".docx")) {
       finalName = finalName + ".docx";
@@ -31,7 +31,7 @@ const processFiles = async (files, setProgress, outputName, setError, setFile) =
 
     setProgress(100);
 
-    // Reset file selepas convert berjaya
+    // Reset file after successful conversion
     setFile(null);
 
     return { url: URL.createObjectURL(blob), name: finalName };
@@ -65,13 +65,13 @@ export default function PdfToWord() {
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            📄 PDF → Word
+            📄 Convert PDF to Word, JPG, PPT & more
           </h1>
           <BackButton to="/dashboard/convert" />
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Convert your PDF documents into editable Word files. Only PDF files are accepted.
+          Fast, secure, and works on any device. No registration required – 100% free to use.
         </p>
 
         {/* File Preview */}
@@ -124,15 +124,15 @@ export default function PdfToWord() {
 
         {/* Wrapper */}
         <PdfToolWrapper
-          key={resetKey} // force reset bila clear
+          key={resetKey}
           title="PDF to Word"
-          description="Turn your PDF into a Word document"
+          description="Drag & Drop your PDF files here, or click Upload to select from your device."
           actionLabel="Convert Now"
           processFiles={handleProcess}
           multiple={false}
           outputName={outputName || "converted.docx"}
           accept=".pdf"
-          setFile={setFile} // pass balik file ke parent
+          setFile={setFile}
         />
       </div>
     </div>
