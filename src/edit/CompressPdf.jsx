@@ -61,13 +61,13 @@ export default function CompressPdf() {
   return (
     <div className="flex justify-center items-start mt-16 px-4">
       <div className="w-full max-w-xl p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
-        {/* Header + Back Button */}
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            📉 Compress PDF – Reduce file size instantly
-          </h1>
-          <BackButton to="/dashboard/convert" />
-        </div>
+            {/* Header + Back Button */}
+            <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                📉 Compress PDF – Reduce file size instantly
+            </h1>
+            <BackButton to="/dashboard/edit" />  {/* ✅ FIXED */}
+            </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
           Make your PDF smaller without losing quality. Fast, secure, and works

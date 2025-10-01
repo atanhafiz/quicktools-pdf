@@ -1,3 +1,5 @@
+// src/ToolsHub.jsx
+
 import React from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "./components/PageWrapper";
@@ -10,6 +12,7 @@ export default function ToolsHub() {
       accent: "text-blue-500",
       tools: [
         { icon: "🔗", name: "Merge PDF", path: "/merge", desc: "Combine multiple PDFs into one" },
+        { icon: "📉", name: "Compress PDF", path: "/compress", desc: "Reduce PDF file size instantly" }, // ✅ baru
         { icon: "✂️", name: "Split PDF", path: "/split", desc: "Split a PDF into separate files" },
         { icon: "🔄", name: "Rotate PDF", path: "/rotate", desc: "Rotate selected PDF pages" },
         { icon: "🗑️", name: "Delete Pages", path: "/delete", desc: "Remove specific pages from PDF" },
@@ -63,12 +66,7 @@ export default function ToolsHub() {
       </div>
 
       {/* Stats Counter */}
-      <StatsCounter
-        files={10000000} // 10M files
-        users={200000} // 200k users
-        uptime={99.9}
-        countries={80}
-      />
+      <StatsCounter files={10000000} users={200000} uptime={99.9} countries={80} />
 
       {/* Tool Categories */}
       {categories.map((cat, i) => (
