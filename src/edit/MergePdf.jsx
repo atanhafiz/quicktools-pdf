@@ -2,26 +2,44 @@ import React, { useState } from "react";
 import PdfToolWrapper from "../components/PdfToolWrapper";
 import BackButton from "../components/BackButton";
 
-// Dummy Merge: simulate merge PDF files
+// Merge PDF via Supabase Edge Function API
 const processFiles = async (files, setProgress, mode, outputName, setError) => {
   try {
     if (!files.length) throw new Error("Please upload at least one PDF file.");
-    files.forEach(f => {
-      if (!f.name.endsWith(".pdf")) throw new Error("Invalid file type. Only PDF files are allowed.");
+    files.forEach((f) => {
+      if (!f.name.endsWith(".pdf"))
+        throw new Error("Invalid file type. Only PDF files are allowed.");
     });
 
     // Default output name
-    let finalName = outputName && outputName.trim() !== "" ? outputName : "merged.pdf";
+    let finalName =
+      outputName && outputName.trim() !== "" ? outputName : "merged.pdf";
     if (!finalName.toLowerCase().endsWith(".pdf")) finalName += ".pdf";
 
     setProgress(25);
-    await new Promise((r) => setTimeout(r, 1000));
-    setProgress(70);
 
-    const mergedBlob = new Blob([], { type: "application/pdf" });
+    // Create FormData
+    const formData = new FormData();
+    files.forEach((f) => formData.append("files", f));
+
+    // Call Supabase Edge Function
+    const res = await fetch(
+      "https://pmvbnfhfryeuxyvcwqxu.functions.supabase.co/merge-pdf",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to merge PDFs. Please try again.");
+    }
+
+    setProgress(70);
+    const blob = await res.blob();
 
     setProgress(100);
-    return { url: URL.createObjectURL(mergedBlob), name: finalName };
+    return { url: URL.createObjectURL(blob), name: finalName };
   } catch (err) {
     setError(err.message);
     setProgress(0);
@@ -47,7 +65,6 @@ export default function MergePdf() {
   return (
     <div className="flex justify-center items-start mt-16 px-4">
       <div className="w-full max-w-xl p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
-        
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -57,7 +74,8 @@ export default function MergePdf() {
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Fast, secure, and works on any device. Files are automatically deleted after 1 hour for your security.
+          Fast, secure, and works on any device. Files are processed in the
+          cloud and never stored permanently.
         </p>
 
         {/* Mode Buttons with Tooltip */}
