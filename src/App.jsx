@@ -18,6 +18,7 @@ import ArticlePage from "./pages/ArticlePage";
 
 // ====== TOOLS ======
 import MergePdf from "./edit/MergePdf";
+import CompressPdf from "./edit/CompressPdf";   // ✅ baru
 import SplitPdf from "./edit/SplitPdf";
 import RotatePdf from "./edit/RotatePdf";
 import DeletePagesPdf from "./edit/DeletePagesPdf";
@@ -94,6 +95,7 @@ function App() {
 
               {/* EDIT TOOLS */}
               <Route path="/merge" element={<MergePdf />} />
+              <Route path="/compress" element={<CompressPdf />} />   {/* ✅ baru */}
               <Route path="/split" element={<SplitPdf />} />
               <Route path="/rotate" element={<RotatePdf />} />
               <Route path="/delete" element={<DeletePagesPdf />} />
