@@ -42,7 +42,7 @@ export default function MergePDF() {
             <ol className="mt-3 list-decimal space-y-2 pl-6 text-gray-700">
               <li>Open QuickTools → Merge PDF</li>
               <li>Upload all PDF files</li>
-              <li>Click <b>Merge Now</b> → Download ready</li>
+              <li>Click <b>Merge Now</b> → Download result</li>
             </ol>
           </div>
           <div>
@@ -51,8 +51,16 @@ export default function MergePDF() {
               <li>Free & Easy to Use</li>
               <li>Secure – Auto file deletion</li>
               <li>Works on Mobile & Desktop</li>
+              <li>High Quality Merging</li>
+              <li>No Watermark</li>
             </ul>
           </div>
+        </div>
+
+        <div className="mt-12 text-center text-sm text-gray-600">
+          <p>Your privacy matters – we never store your files longer than necessary.</p>
+          <p className="mt-1">Files are automatically deleted after 1 hour for your security.</p>
+          <p className="mt-2 font-medium">Powered by QuickTools – The easiest way to work with PDFs.</p>
         </div>
 
         <footer className="mt-12 flex flex-wrap items-center justify-between gap-3">
@@ -60,6 +68,7 @@ export default function MergePDF() {
           <nav className="text-sm text-gray-600 flex gap-4">
             <Link to="/seo/split" className="hover:underline">Split</Link>
             <Link to="/seo/compress" className="hover:underline">Compress</Link>
+            <Link to="/seo/convert" className="hover:underline">Convert</Link>
           </nav>
         </footer>
       </section>

@@ -7,46 +7,54 @@ export default function CompressPDF() {
   return (
     <main className="min-h-screen bg-gray-50">
       <Helmet>
-        <title>Compress PDF Online Free | QuickTools</title>
-        <meta name="description" content="Compress PDF online percuma. Kecilkan saiz fail dengan cepat tanpa hilang kualiti." />
-        <meta name="keywords" content="compress pdf, pdf compressor, reduce pdf size, kecilkan pdf, kompres pdf" />
+        <title>Compress PDF – Reduce file size instantly | QuickTools</title>
+        <meta name="description" content="Compress PDF online free. Reduce file size instantly without losing quality. Fast, secure, no watermark." />
+        <meta name="keywords" content="compress pdf, pdf compressor, reduce pdf size, pdf optimizer, compress pdf online" />
       </Helmet>
 
       <section className="mx-auto max-w-5xl px-6 py-12">
         <header className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Compress PDF Online – Reduce File Size Fast</h1>
-          <p className="mt-3 text-gray-600">Kecik saiz PDF untuk senang hantar WhatsApp/Email. Free guna.</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Compress PDF – Reduce file size instantly</h1>
+          <p className="mt-3 text-gray-600">Fast, secure, and works on any device. No registration required – 100% free to use.</p>
         </header>
 
         <div className="mt-8 rounded-2xl border-2 border-dashed border-emerald-400 bg-white p-8 shadow-sm">
-          <p className="mb-4 text-center text-gray-700">Drag & Drop PDF hang</p>
+          <p className="mb-4 text-center text-gray-700">Drag & Drop your PDF files here, or click Upload to select from your device.</p>
           <div className="flex flex-col items-center gap-3 md:flex-row md:justify-center">
-            <button onClick={() => navigate("/tools/compress")} className="w-full md:w-auto rounded-lg bg-emerald-600 px-6 py-3 font-medium text-white shadow hover:bg-emerald-700 transition">Upload PDF</button>
+            <button onClick={() => navigate("/tools/compress")} className="w-full md:w-auto rounded-lg bg-emerald-600 px-6 py-3 font-medium text-white shadow hover:bg-emerald-700 transition">Upload Files</button>
             <button onClick={() => navigate("/tools/compress")} className="w-full md:w-auto rounded-lg bg-blue-600 px-6 py-3 font-medium text-white shadow hover:bg-blue-700 transition">Compress Now</button>
           </div>
         </div>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2">
           <div>
-            <h2 className="text-xl font-semibold">Tips Kualiti</h2>
-            <ul className="mt-3 list-disc space-y-2 pl-6 text-gray-700">
-              <li>Pilih tahap kompres ikut keperluan (Low/Medium/High)</li>
-              <li>Untuk dokumen scan, guna OCR lepas kompres</li>
-              <li>Sasaran <b>&lt; 2MB</b> untuk WhatsApp</li>
-            </ul>
+            <h2 className="text-xl font-semibold">How to Compress PDF Free</h2>
+            <ol className="mt-3 list-decimal space-y-2 pl-6 text-gray-700">
+              <li>Open QuickTools → Compress PDF</li>
+              <li>Upload your PDF file</li>
+              <li>Click <b>Compress Now</b> → Download result</li>
+            </ol>
           </div>
           <div>
-            <h2 className="text-xl font-semibold">FAQ Ringkas</h2>
+            <h2 className="text-xl font-semibold">Why QuickTools?</h2>
             <ul className="mt-3 list-disc space-y-2 pl-6 text-gray-700">
-              <li>Ada watermark? — Basic tiada watermark</li>
-              <li>Privacy? — Auto delete fail dalam 1 jam</li>
-              <li>Support mobile? — Ya, mobile-first</li>
+              <li>Free & Easy to Use</li>
+              <li>Secure – Auto file deletion</li>
+              <li>Works on Mobile & Desktop</li>
+              <li>High Quality Compression</li>
+              <li>No Watermark</li>
             </ul>
           </div>
         </div>
 
+        <div className="mt-12 text-center text-sm text-gray-600">
+          <p>Your privacy matters – we never store your files longer than necessary.</p>
+          <p className="mt-1">Files are automatically deleted after 1 hour for your security.</p>
+          <p className="mt-2 font-medium">Powered by QuickTools – The easiest way to work with PDFs.</p>
+        </div>
+
         <footer className="mt-12 flex justify-between items-center">
-          <Link to="/" className="text-blue-600 hover:underline">← Balik Home</Link>
+          <Link to="/" className="text-blue-600 hover:underline">← Back Home</Link>
           <nav className="text-sm text-gray-600 flex gap-4">
             <Link to="/seo/merge" className="hover:underline">Merge</Link>
             <Link to="/seo/split" className="hover:underline">Split</Link>
