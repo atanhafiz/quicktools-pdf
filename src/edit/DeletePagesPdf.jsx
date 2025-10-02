@@ -1,27 +1,70 @@
 import React, { useState } from "react";
 import PdfToolWrapper from "../components/PdfToolWrapper";
-import BackButton from "../components/BackButton"; // ✅ Import back button
+import BackButton from "../components/BackButton";
 
-// Dummy Delete Pages
-const processFiles = async (files, setProgress, mode, pages) => {
-  setProgress(25);
-  await new Promise((r) => setTimeout(r, 1000));
-  setProgress(70);
+// Call Supabase API delete-pdf
+const processFiles = async (files, setProgress, mode, pages, outputName, setError) => {
+  try {
+    const file = files[0];
+    if (!file || !file.name.endsWith(".pdf")) {
+      throw new Error("Invalid file type. Please upload a PDF file.");
+    }
 
-  const file = files[0];
-  const arrayBuffer = await file.arrayBuffer();
-  const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+    let finalName = outputName && outputName.trim() !== "" ? outputName : "deleted.pdf";
+    if (!finalName.toLowerCase().endsWith(".pdf")) finalName += ".pdf";
 
-  setProgress(100);
-  return { url: URL.createObjectURL(blob), name: "deleted.pdf" };
+    setProgress(25);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("mode", mode);
+    if (pages.trim() !== "") {
+      formData.append("pages", pages);
+    }
+
+    const res = await fetch(
+      "https://pmvbnfhfryeuxyvcwqxu.functions.supabase.co/delete-pdf",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Delete API Error:", res.status, text);
+      throw new Error(`Delete API failed: ${res.status} ${text}`);
+    }
+
+    setProgress(70);
+    const blob = await res.blob();
+
+    setProgress(100);
+    return { url: URL.createObjectURL(blob), name: finalName };
+  } catch (err) {
+    console.error("DeletePages Error:", err);
+    setError(err.message);
+    setProgress(0);
+    throw err;
+  }
 };
 
 export default function DeletePagesPdf() {
-  const [mode, setMode] = useState("specific");
+  const [mode, setMode] = useState("specific"); // specific / odd-even
   const [pages, setPages] = useState("");
+  const [outputName, setOutputName] = useState("");
+  const [error, setError] = useState("");
+  const [resetKey, setResetKey] = useState(0);
 
   const handleProcess = (files, setProgress) =>
-    processFiles(files, setProgress, mode, pages);
+    processFiles(files, setProgress, mode, pages, outputName, setError);
+
+  const handleClear = () => {
+    setOutputName("");
+    setPages("");
+    setError("");
+    setResetKey((prev) => prev + 1);
+  };
 
   return (
     <div className="flex justify-center items-start mt-16 px-4">
@@ -30,13 +73,13 @@ export default function DeletePagesPdf() {
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            🗑️ Delete Pages PDF
+            🗑️ Delete Pages – Remove unwanted pages
           </h1>
           <BackButton to="/dashboard/edit" />
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Remove specific pages (manual) or auto-delete odd/even pages.
+          Choose specific pages to delete, or auto-delete odd/even pages.
         </p>
 
         {/* Mode Buttons */}
@@ -73,7 +116,7 @@ export default function DeletePagesPdf() {
               type="text"
               value={pages}
               onChange={(e) => setPages(e.target.value)}
-              placeholder="e.g. 1, 3, 5-7"
+              placeholder="e.g. 1,3,5-7"
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-800 dark:text-white"
             />
           </div>
@@ -94,13 +137,42 @@ export default function DeletePagesPdf() {
           </div>
         )}
 
+        {/* Output Name */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">
+            Output File Name
+          </label>
+          <input
+            type="text"
+            value={outputName}
+            onChange={(e) => setOutputName(e.target.value)}
+            placeholder="deleted.pdf"
+            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-800 dark:text-white"
+          />
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 rounded bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-200 flex justify-between items-center">
+            <span>⚠️ {error}</span>
+            <button
+              onClick={handleClear}
+              className="ml-4 px-3 py-1 rounded bg-red-600 text-white text-xs hover:bg-red-700"
+            >
+              Clear
+            </button>
+          </div>
+        )}
+
+        {/* Wrapper */}
         <PdfToolWrapper
+          key={resetKey}
           title="Delete Pages"
-          description="Remove unwanted pages from your PDF"
+          description="Upload your PDF and choose which pages to delete."
           actionLabel="Delete Now"
           processFiles={handleProcess}
           multiple={false}
-          outputName="deleted.pdf"
+          outputName={outputName || "deleted.pdf"}
           accept=".pdf"
         />
       </div>
