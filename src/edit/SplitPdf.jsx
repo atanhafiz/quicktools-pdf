@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PdfToolWrapper from "../components/PdfToolWrapper";
 import BackButton from "../components/BackButton";
 
-// Dummy Split: simulate split PDF
+// Call Supabase API to split PDF
 const processFiles = async (files, setProgress, mode, pageRange, outputName, setError) => {
   try {
     const file = files[0];
@@ -11,15 +11,33 @@ const processFiles = async (files, setProgress, mode, pageRange, outputName, set
     }
 
     // Default output name
-    let finalName = outputName && outputName.trim() !== "" ? outputName : "split.pdf";
+    let finalName =
+      outputName && outputName.trim() !== "" ? outputName : "split.pdf";
     if (!finalName.toLowerCase().endsWith(".pdf")) finalName += ".pdf";
 
-    setProgress(20);
-    await new Promise((r) => setTimeout(r, 1000));
-    setProgress(60);
+    setProgress(25);
 
-    const arrayBuffer = await file.arrayBuffer();
-    const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("mode", mode); // auto or manual
+    if (mode === "manual" && pageRange) {
+      formData.append("pages", pageRange);
+    }
+
+    const res = await fetch(
+      "https://pmvbnfhfryeuxyvcwqxu.functions.supabase.co/split-pdf",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to split PDF. Please try again.");
+    }
+
+    setProgress(70);
+    const blob = await res.blob();
 
     setProgress(100);
     return { url: URL.createObjectURL(blob), name: finalName };
@@ -49,7 +67,6 @@ export default function SplitPdf() {
   return (
     <div className="flex justify-center items-start mt-16 px-4">
       <div className="w-full max-w-xl p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
-
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -59,41 +76,31 @@ export default function SplitPdf() {
         </div>
 
         <p className="text-gray-700 dark:text-gray-200 mb-6">
-          Fast, secure, and works on any device. Works on desktop, tablet, and mobile.
+          Extract pages from your PDF. Example input: <b>1,3-5</b>. In Auto mode, each page will be saved as a separate PDF.
         </p>
 
-        {/* Mode Buttons with Tooltip */}
+        {/* Mode Buttons */}
         <div className="flex gap-3 mb-4">
-          <div className="relative group flex-1">
-            <button
-              onClick={() => setMode("manual")}
-              className={`w-full px-4 py-2 rounded-lg font-semibold shadow transition ${
-                mode === "manual"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
-              }`}
-            >
-              ✏️ Manual Mode
-            </button>
-            <div className="absolute left-0 mt-1 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow">
-              Enter specific page ranges (e.g. 1-2, 3, 4-6)
-            </div>
-          </div>
-          <div className="relative group flex-1">
-            <button
-              onClick={() => setMode("auto")}
-              className={`w-full px-4 py-2 rounded-lg font-semibold shadow transition ${
-                mode === "auto"
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
-              }`}
-            >
-              ⚡ Auto Mode
-            </button>
-            <div className="absolute left-0 mt-1 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded shadow">
-              Each page will be saved as a separate PDF
-            </div>
-          </div>
+          <button
+            onClick={() => setMode("manual")}
+            className={`flex-1 px-4 py-2 rounded-lg font-semibold shadow transition ${
+              mode === "manual"
+                ? "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
+            }`}
+          >
+            ✏️ Manual Mode
+          </button>
+          <button
+            onClick={() => setMode("auto")}
+            className={`flex-1 px-4 py-2 rounded-lg font-semibold shadow transition ${
+              mode === "auto"
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
+            }`}
+          >
+            ⚡ Auto Mode
+          </button>
         </div>
 
         {/* Page Range Input */}
@@ -121,12 +128,9 @@ export default function SplitPdf() {
             type="text"
             value={outputName}
             onChange={(e) => setOutputName(e.target.value)}
-            placeholder="Enter output file name.pdf"
+            placeholder="split.pdf"
             className="w-full px-4 py-2 border rounded-lg dark:bg-gray-800 dark:text-white"
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Default will be <b>split.pdf</b> if left empty.
-          </p>
         </div>
 
         {/* Error Message */}
@@ -146,7 +150,7 @@ export default function SplitPdf() {
         <PdfToolWrapper
           key={resetKey}
           title="Split PDF"
-          description="Split your PDF into smaller documents"
+          description="Upload a PDF and select pages to extract"
           actionLabel="Split Now"
           processFiles={handleProcess}
           multiple={false}
