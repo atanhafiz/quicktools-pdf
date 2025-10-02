@@ -1,13 +1,13 @@
 // supabase/functions/delete-pdf/index.ts
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { PDFDocument } from "npm:pdf-lib@1.17.1";
+import { PDFDocument } from "npm:pdf-lib";
 
 serve(async (req) => {
   try {
-    const form = await req.formData();
-    const file = form.get("file") as File;
-    const mode = form.get("mode")?.toString() || "specific";
-    const pagesInput = form.get("pages")?.toString() || "";
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const mode = formData.get("mode") as string;
+    const pages = formData.get("pages") as string;
 
     if (!file) {
       return new Response("No file uploaded", {
@@ -18,38 +18,27 @@ serve(async (req) => {
 
     const buffer = new Uint8Array(await file.arrayBuffer());
     const pdfDoc = await PDFDocument.load(buffer);
+    const totalPages = pdfDoc.getPageCount();
 
     let pagesToDelete: number[] = [];
 
-    if (mode === "specific") {
-      // Parse "1,3,5-7"
-      if (pagesInput.trim() !== "") {
-        pagesInput.split(",").forEach((part) => {
-          part = part.trim();
-          if (part.includes("-")) {
-            const [start, end] = part.split("-").map((n) => parseInt(n));
-            for (let i = start; i <= end; i++) pagesToDelete.push(i - 1);
-          } else {
-            pagesToDelete.push(parseInt(part) - 1);
-          }
-        });
-      }
+    if (mode === "specific" && pages) {
+      pages.split(",").forEach((range) => {
+        if (range.includes("-")) {
+          const [start, end] = range.split("-").map((n) => parseInt(n.trim()) - 1);
+          for (let i = start; i <= end; i++) pagesToDelete.push(i);
+        } else {
+          pagesToDelete.push(parseInt(range.trim()) - 1);
+        }
+      });
     } else if (mode === "odd-even") {
-      if (pagesInput === "odd") {
-        pdfDoc.getPages().forEach((_, i) => {
-          if ((i + 1) % 2 !== 0) pagesToDelete.push(i);
-        });
-      } else if (pagesInput === "even") {
-        pdfDoc.getPages().forEach((_, i) => {
-          if ((i + 1) % 2 === 0) pagesToDelete.push(i);
-        });
+      if (pages === "odd") {
+        for (let i = 0; i < totalPages; i++) if ((i + 1) % 2 !== 0) pagesToDelete.push(i);
+      } else if (pages === "even") {
+        for (let i = 0; i < totalPages; i++) if ((i + 1) % 2 === 0) pagesToDelete.push(i);
       }
     }
 
-    // Validate
-    pagesToDelete = pagesToDelete.filter(
-      (p) => p >= 0 && p < pdfDoc.getPageCount()
-    );
     if (pagesToDelete.length === 0) {
       return new Response("No valid pages to delete", {
         status: 400,
@@ -57,15 +46,18 @@ serve(async (req) => {
       });
     }
 
-    // Delete descending order
-    pagesToDelete.sort((a, b) => b - a);
+    // Buang duplicate & sort dari besar → kecil
+    pagesToDelete = [...new Set(pagesToDelete)].sort((a, b) => b - a);
+
     for (const p of pagesToDelete) {
-      pdfDoc.removePage(p);
+      if (p >= 0 && p < pdfDoc.getPageCount()) {
+        pdfDoc.removePage(p);
+      }
     }
 
-    const outPdf = await pdfDoc.save();
-    return new Response(outPdf, {
-      status: 200,
+    const modified = await pdfDoc.save();
+
+    return new Response(modified, {
       headers: {
         ...corsHeaders,
         "Content-Type": "application/pdf",
@@ -73,8 +65,8 @@ serve(async (req) => {
       },
     });
   } catch (err) {
-    console.error("Delete-PDF error:", err);
-    return new Response(`Error: ${err.message}`, {
+    console.error(err);
+    return new Response("Error processing PDF: " + err.message, {
       status: 500,
       headers: corsHeaders,
     });
@@ -84,6 +76,12 @@ serve(async (req) => {
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// Preflight (OPTIONS) handler
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+});
