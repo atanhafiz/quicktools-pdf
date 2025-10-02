@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PdfToolWrapper from "../components/PdfToolWrapper";
 import BackButton from "../components/BackButton";
 
-// Call Supabase API rotate-pdf
+// Call Supabase Edge Function rotate-pdf
 const processFiles = async (files, setProgress, mode, angle, pages, outputName, setError) => {
   try {
     const file = files[0];
@@ -13,7 +13,7 @@ const processFiles = async (files, setProgress, mode, angle, pages, outputName, 
     let finalName = outputName && outputName.trim() !== "" ? outputName : "rotated.pdf";
     if (!finalName.toLowerCase().endsWith(".pdf")) finalName += ".pdf";
 
-    setProgress(25);
+    setProgress(20);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -23,6 +23,7 @@ const processFiles = async (files, setProgress, mode, angle, pages, outputName, 
       formData.append("pages", pages);
     }
 
+    // Call Supabase Edge Function
     const res = await fetch(
       "https://pmvbnfhfryeuxyvcwqxu.functions.supabase.co/rotate-pdf",
       {
@@ -32,7 +33,9 @@ const processFiles = async (files, setProgress, mode, angle, pages, outputName, 
     );
 
     if (!res.ok) {
-      throw new Error("Failed to rotate PDF. Please try again.");
+      const text = await res.text();
+      console.error("Rotate API Error:", res.status, text);
+      throw new Error(`Rotate API failed: ${res.status} ${text}`);
     }
 
     setProgress(70);
@@ -41,6 +44,7 @@ const processFiles = async (files, setProgress, mode, angle, pages, outputName, 
     setProgress(100);
     return { url: URL.createObjectURL(blob), name: finalName };
   } catch (err) {
+    console.error("RotatePdf Error:", err);
     setError(err.message);
     setProgress(0);
     throw err;
@@ -68,7 +72,6 @@ export default function RotatePdf() {
   return (
     <div className="flex justify-center items-start mt-16 px-4">
       <div className="w-full max-w-xl p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
-        
         {/* Header + Back Button */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
