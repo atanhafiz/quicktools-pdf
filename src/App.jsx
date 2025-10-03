@@ -1,4 +1,3 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./ThemeContext";
 import Navbar from "./components/Navbar";
@@ -18,11 +17,12 @@ import ArticlePage from "./pages/ArticlePage";
 
 // ====== TOOLS ======
 import MergePdf from "./edit/MergePdf";
-import CompressPdf from "./edit/CompressPdf";   // ✅ baru
+import CompressPdf from "./edit/CompressPdf";
 import SplitPdf from "./edit/SplitPdf";
 import RotatePdf from "./edit/RotatePdf";
 import DeletePagesPdf from "./edit/DeletePagesPdf";
 import OrganizePdf from "./edit/OrganizePdf";
+import PipelineTool from "./edit/PipelineTool";   // ✅ baru
 import PdfToWord from "./convert/PdfToWord";
 import PdfToExcel from "./convert/PdfToExcel";
 import PdfToPpt from "./convert/PdfToPpt";
@@ -95,11 +95,12 @@ function App() {
 
               {/* EDIT TOOLS */}
               <Route path="/merge" element={<MergePdf />} />
-              <Route path="/compress" element={<CompressPdf />} />   {/* ✅ baru */}
+              <Route path="/compress" element={<CompressPdf />} />
               <Route path="/split" element={<SplitPdf />} />
               <Route path="/rotate" element={<RotatePdf />} />
               <Route path="/delete" element={<DeletePagesPdf />} />
               <Route path="/organize" element={<OrganizePdf />} />
+              <Route path="/pipeline" element={<PipelineTool />} />   {/* ✅ baru */}
 
               {/* CONVERT TOOLS */}
               <Route path="/pdf-to-word" element={<PdfToWord />} />
@@ -142,7 +143,7 @@ function App() {
               {/* DEMO ROUTES (Dev Only) */}
               {DemoRoutes}
 
-              {/* CATCH-ALL 404 → Redirect Landing */}
+              {/* CATCH-ALL */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

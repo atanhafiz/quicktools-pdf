@@ -1,5 +1,3 @@
-// src/pages/DashboardEdit.jsx
-
 import React from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
@@ -7,11 +5,12 @@ import PageWrapper from "../components/PageWrapper";
 export default function DashboardEdit() {
   const tools = [
     { icon: "🔗", name: "Merge PDF", path: "/merge", desc: "Combine multiple PDFs into one file" },
-    { icon: "📉", name: "Compress PDF", path: "/compress", desc: "Reduce PDF file size instantly" }, // ✅ baru
+    { icon: "📉", name: "Compress PDF", path: "/compress", desc: "Reduce PDF file size instantly" },
     { icon: "✂️", name: "Split PDF", path: "/split", desc: "Split PDF into smaller files" },
     { icon: "🔄", name: "Rotate PDF", path: "/rotate", desc: "Rotate selected pages" },
     { icon: "🗑️", name: "Delete Pages", path: "/delete", desc: "Remove unwanted pages" },
     { icon: "📑", name: "Organize PDF", path: "/organize", desc: "Rearrange and manage PDF pages" },
+    { icon: "⚡", name: "Pipeline Tool", path: "/pipeline", desc: "Merge → Organize → Compress in one click" }, // ✅ baru
   ];
 
   return (
