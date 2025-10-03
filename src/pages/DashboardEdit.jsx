@@ -10,7 +10,8 @@ export default function DashboardEdit() {
     { icon: "🔄", name: "Rotate PDF", path: "/rotate", desc: "Rotate selected pages" },
     { icon: "🗑️", name: "Delete Pages", path: "/delete", desc: "Remove unwanted pages" },
     { icon: "📑", name: "Organize PDF", path: "/organize", desc: "Rearrange and manage PDF pages" },
-    { icon: "⚡", name: "Pipeline Tool", path: "/pipeline", desc: "Merge → Organize → Compress in one click" }, // ✅ baru
+    { icon: "⚡", name: "Pipeline Tool", path: "/pipeline", desc: "Merge → Organize → Compress in one click" },
+    { icon: "⚡", name: "Pipeline Advanced", path: "/pipeline-advanced", desc: "Customizable multi-step pipeline" },
   ];
 
   return (

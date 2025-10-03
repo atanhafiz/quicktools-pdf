@@ -15,7 +15,8 @@ export default function ToolsHub() {
         { icon: "🔄", name: "Rotate PDF", path: "/rotate", desc: "Rotate selected PDF pages" },
         { icon: "🗑️", name: "Delete Pages", path: "/delete", desc: "Remove specific pages from PDF" },
         { icon: "📑", name: "Organize PDF", path: "/organize", desc: "Rearrange and manage PDF pages" },
-        { icon: "⚡", name: "Pipeline Tool", path: "/pipeline", desc: "One-click: Merge → Organize → Compress" }, // ✅ baru
+        { icon: "⚡", name: "Pipeline Tool", path: "/pipeline", desc: "One-click: Merge → Organize → Compress" },
+        { icon: "⚡", name: "Pipeline Advanced", path: "/pipeline-advanced", desc: "Custom multi-step pipeline (Merge/Organize/Compress/Protect/Unlock)" },
       ],
     },
     {

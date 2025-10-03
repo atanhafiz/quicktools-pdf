@@ -22,18 +22,22 @@ import SplitPdf from "./edit/SplitPdf";
 import RotatePdf from "./edit/RotatePdf";
 import DeletePagesPdf from "./edit/DeletePagesPdf";
 import OrganizePdf from "./edit/OrganizePdf";
-import PipelineTool from "./edit/PipelineTool";   // ✅ baru
+import PipelineTool from "./edit/PipelineTool";
+import PipelineAdvanced from "./edit/PipelineAdvanced";
+
 import PdfToWord from "./convert/PdfToWord";
 import PdfToExcel from "./convert/PdfToExcel";
 import PdfToPpt from "./convert/PdfToPpt";
 import PdfToImage from "./convert/PdfToImage";
 import ImageToPdf from "./convert/ImageToPdf";
 import WordToPdf from "./convert/WordToPdf";
+
 import ProtectPdf from "./secure/ProtectPdf";
 import UnlockPdf from "./secure/UnlockPdf";
 import SignPdf from "./secure/SignPdf";
 import WatermarkPdf from "./secure/WatermarkPdf";
 import EsignFlow from "./secure/EsignFlow";
+
 import OcrPdf from "./smartai/OcrPdf";
 import AiSummary from "./smartai/AiSummary";
 import FormFiller from "./smartai/FormFiller";
@@ -45,7 +49,7 @@ import FAQ from "./pages/FAQ";
 import Pricing from "./pages/Pricing";
 
 // ====== SEO PAGES ======
-import { 
+import {
   MergePDF, CompressPDF, SplitPDF, ConvertPDF, OCRPDF,
   SignPDF, EditPDF, SecurePDF, UnlockPDF, PDFtoJPG
 } from "./pages/seo";
@@ -100,7 +104,8 @@ function App() {
               <Route path="/rotate" element={<RotatePdf />} />
               <Route path="/delete" element={<DeletePagesPdf />} />
               <Route path="/organize" element={<OrganizePdf />} />
-              <Route path="/pipeline" element={<PipelineTool />} />   {/* ✅ baru */}
+              <Route path="/pipeline" element={<PipelineTool />} />
+              <Route path="/pipeline-advanced" element={<PipelineAdvanced />} />
 
               {/* CONVERT TOOLS */}
               <Route path="/pdf-to-word" element={<PdfToWord />} />
@@ -140,7 +145,7 @@ function App() {
               <Route path="/seo/unlock" element={<UnlockPDF />} />
               <Route path="/seo/pdf-to-jpg" element={<PDFtoJPG />} />
 
-              {/* DEMO ROUTES (Dev Only) */}
+              {/* DEMO ROUTES */}
               {DemoRoutes}
 
               {/* CATCH-ALL */}
