@@ -1,4 +1,3 @@
-// supabase/functions/protect-pdf/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const EXTERNAL_URL = Deno.env.get("PDF_PROTECTOR_URL") || "";
@@ -16,18 +15,12 @@ serve(async (req: Request) => {
   }
 
   try {
-    if (!EXTERNAL_URL) throw new Error("Missing PDF_PROTECTOR_URL");
-    if (!PROXY_SECRET) throw new Error("Missing PDF_PROTECTOR_SECRET");
-
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
     const password = (formData.get("password") as string) || "123456";
 
     if (!file) {
-      return new Response("No file uploaded", {
-        status: 400,
-        headers: corsHeaders,
-      });
+      return new Response("No file uploaded", { status: 400, headers: corsHeaders });
     }
 
     const arrayBuffer = await file.arrayBuffer();
@@ -35,7 +28,6 @@ serve(async (req: Request) => {
     forwardForm.append("file", new Blob([arrayBuffer]), "input.pdf");
     forwardForm.append("password", password);
 
-    // Forward to Render service
     const resp = await fetch(EXTERNAL_URL, {
       method: "POST",
       body: forwardForm,
