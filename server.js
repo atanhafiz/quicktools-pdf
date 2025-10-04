@@ -37,19 +37,18 @@ app.post("/protect", upload.single("file"), async (req, res) => {
     await fs.writeFile(inputPath, req.file.buffer);
 
     await new Promise((resolve, reject) => {
-      const p = spawn("qpdf", [inputPath, outputPath, "--encrypt", password, password, "128"]);
+      const args = [
+        inputPath,            // infile
+        outputPath,           // outfile
+        "--encrypt", password, password, "128"
+      ];
+      const p = spawn("qpdf", args);
       let stderr = "";
       p.stderr.on("data", (d) => stderr += d.toString());
-      p.on("close", (code) => {
-        if (code === 0) {
-          resolve();
-        } else {
-          console.error("qpdf stderr:", stderr);
-          reject(new Error(`qpdf failed with code ${code}: ${stderr}`));
-        }
-      });
+      p.on("close", (code) => code === 0 ? resolve() : reject(new Error(stderr)));
     });
-
+    
+    
     const stat = await fs.stat(outputPath);
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", "attachment; filename=protected.pdf");
