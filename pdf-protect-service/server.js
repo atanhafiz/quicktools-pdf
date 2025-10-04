@@ -1,4 +1,4 @@
-// Express microservice that protects PDFs with qpdf
+// Express microservice that protects and unlocks PDFs with qpdf
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -64,6 +64,54 @@ app.post("/protect", upload.single("file"), async (req, res) => {
     stream.on("close", async () => await fs.rm(tmpDir, { recursive: true, force: true }));
   } catch (err) {
     console.error("protect error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/unlock", upload.single("file"), async (req, res) => {
+  try {
+    if (req.header("x-proxy-secret") !== PROXY_SECRET) {
+      return res.status(401).json({ error: "unauthorized" });
+    }
+
+    const password = (req.body.password || "").toString();
+    if (!req.file) return res.status(400).json({ error: "no file uploaded" });
+    if (!password) return res.status(400).json({ error: "password required" });
+
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "pdf-"));
+    const inputPath = path.join(tmpDir, "input.pdf");
+    const outputPath = path.join(tmpDir, "unlocked.pdf");
+
+    await fs.writeFile(inputPath, req.file.buffer);
+
+    await new Promise((resolve, reject) => {
+      const args = [`--password=${password}`, "--decrypt", inputPath, outputPath];
+      
+      const p = spawn("qpdf", args);
+      let stderr = "";
+      
+      p.stderr.on("data", (d) => stderr += d.toString());
+      
+      p.on("close", (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          console.error("qpdf stderr:", stderr);
+          reject(new Error(`qpdf failed with code ${code}: ${stderr}`));
+        }
+      });
+    });
+
+    const stat = await fs.stat(outputPath);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=unlocked.pdf");
+    res.setHeader("Content-Length", stat.size.toString());
+
+    const stream = (await import("fs")).createReadStream(outputPath);
+    stream.pipe(res);
+    stream.on("close", async () => await fs.rm(tmpDir, { recursive: true, force: true }));
+  } catch (err) {
+    console.error("unlock error:", err);
     res.status(500).json({ error: err.message });
   }
 });
