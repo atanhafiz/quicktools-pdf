@@ -1,1 +1,1 @@
-{"code":"NOT_FOUND","message":"Requested function was not found"}
+Unlock service error: {"error":"qpdf failed with code 2: \nqpdf: missing -- at end of options\n\nUsage: qpdf [options] infile outfile\nFor detailed help, run qpdf --help\n\n"}

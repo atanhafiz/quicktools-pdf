@@ -1,10 +1,8 @@
 // supabase/functions/protect-pdf/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const EXTERNAL_URL =
-  Deno.env.get("PDF_PROTECTOR_URL") || "http://localhost:8080/protect";
-const PROXY_SECRET =
-  Deno.env.get("PDF_PROTECTOR_SECRET") || "supersecret-change-this";
+const EXTERNAL_URL = Deno.env.get("PDF_PROTECTOR_URL") || "";
+const PROXY_SECRET = Deno.env.get("PDF_PROTECTOR_SECRET") || "";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,31 +11,31 @@ const corsHeaders = {
 };
 
 serve(async (req: Request) => {
-  // ✅ Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // ✅ Ambil form data (file + password)
+    if (!EXTERNAL_URL) throw new Error("Missing PDF_PROTECTOR_URL");
+    if (!PROXY_SECRET) throw new Error("Missing PDF_PROTECTOR_SECRET");
+
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
     const password = (formData.get("password") as string) || "123456";
 
     if (!file) {
-      return new Response(JSON.stringify({ error: "No file uploaded" }), {
+      return new Response("No file uploaded", {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: corsHeaders,
       });
     }
 
-    // ✅ Convert file to ArrayBuffer → forward ke microservice
     const arrayBuffer = await file.arrayBuffer();
     const forwardForm = new FormData();
     forwardForm.append("file", new Blob([arrayBuffer]), "input.pdf");
     forwardForm.append("password", password);
 
-    // ✅ Hantar ke microservice
+    // Forward to Render service
     const resp = await fetch(EXTERNAL_URL, {
       method: "POST",
       body: forwardForm,
@@ -46,21 +44,21 @@ serve(async (req: Request) => {
 
     if (!resp.ok) {
       const text = await resp.text();
+      console.error("Protect service error:", text);
       return new Response("Protect service error: " + text, {
         status: 502,
         headers: corsHeaders,
       });
     }
 
-    // ✅ Ambil balik PDF encrypted
-    const pdfArrayBuffer = await resp.arrayBuffer();
+    const pdfBytes = await resp.arrayBuffer();
 
-    return new Response(pdfArrayBuffer, {
+    return new Response(pdfBytes, {
       status: 200,
       headers: {
         ...corsHeaders,
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="protected.pdf"`,
+        "Content-Disposition": 'attachment; filename="protected.pdf"',
       },
     });
   } catch (err) {
