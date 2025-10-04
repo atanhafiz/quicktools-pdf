@@ -10,9 +10,8 @@ const corsHeaders = {
 };
 
 serve(async (req: Request) => {
-  if (req.method === "OPTIONS") {
+  if (req.method === "OPTIONS")
     return new Response("ok", { headers: corsHeaders });
-  }
 
   try {
     const formData = await req.formData();
@@ -23,9 +22,9 @@ serve(async (req: Request) => {
       return new Response("No file uploaded", { status: 400, headers: corsHeaders });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
+    const buffer = await file.arrayBuffer();
     const forwardForm = new FormData();
-    forwardForm.append("file", new Blob([arrayBuffer]), "input.pdf");
+    forwardForm.append("file", new Blob([buffer]), "input.pdf");
     forwardForm.append("password", password);
 
     const resp = await fetch(EXTERNAL_URL, {
@@ -37,14 +36,10 @@ serve(async (req: Request) => {
     if (!resp.ok) {
       const text = await resp.text();
       console.error("Protect service error:", text);
-      return new Response("Protect service error: " + text, {
-        status: 502,
-        headers: corsHeaders,
-      });
+      return new Response("Protect service error: " + text, { status: 502, headers: corsHeaders });
     }
 
     const pdfBytes = await resp.arrayBuffer();
-
     return new Response(pdfBytes, {
       status: 200,
       headers: {
@@ -55,9 +50,6 @@ serve(async (req: Request) => {
     });
   } catch (err) {
     console.error("Protect PDF proxy error:", err);
-    return new Response("Failed to protect PDF: " + err.message, {
-      status: 500,
-      headers: corsHeaders,
-    });
+    return new Response("Failed to protect PDF: " + err.message, { status: 500, headers: corsHeaders });
   }
 });
