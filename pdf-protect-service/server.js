@@ -37,11 +37,7 @@ app.post("/protect", upload.single("file"), async (req, res) => {
     await fs.writeFile(inputPath, req.file.buffer);
 
     await new Promise((resolve, reject) => {
-      const args = [
-        inputPath,
-        outputPath,
-        "--encrypt", password, password, "128"
-      ];
+      const args = [inputPath, outputPath, "--encrypt", password, password, "128"];
       
       const p = spawn("qpdf", args);
       let stderr = "";
